@@ -14,7 +14,7 @@ app.post('/search', async (req, res) => {
   const message = req.body.message;
   const msg = new HumanMessage({ content: message });
   const result = await graph.invoke({ messages: [msg] });
-  res.json(result);
+  res.json(result.response);
 });
 
 const port = process.env.PORT || 3333;
