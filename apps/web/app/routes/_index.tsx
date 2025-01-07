@@ -114,14 +114,13 @@ export default function Index() {
                       </h3>
                       <p>{pet.answer}</p>
                       <p className=" pt-2">
-                        <Link
+                        <a
                           className="text-blue-600 underline"
                           href={pet.url}
                           target="_blank"
-                          rel="noreferrer"
                         >
                           {pet.url}
-                        </Link>
+                        </a>
                       </p>
                     </div>
                   </div>
