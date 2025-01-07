@@ -91,10 +91,3 @@ export class PetVectorSearch {
     return results;
   }
 }
-
-// Example usage
-(async () => {
-  const petSearch = new PetVectorSearch();
-  const results = await petSearch.searchPets('friendly dog', { type: 'dog' });
-  console.log(results);
-})();
