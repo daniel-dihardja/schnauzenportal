@@ -60,7 +60,7 @@ export class PetVectorSearch {
           path: 'embedding',
           index: this.vectorSearchIndex,
           numCandidates: 10,
-          limit: 3,
+          limit: 10,
           filter: filterObj || {},
         },
       },
