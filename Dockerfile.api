@@ -1,0 +1,33 @@
+# Stage 1: Build the API
+FROM node:20-slim AS builder
+
+# Set the working directory inside the container
+WORKDIR /workspace
+
+# Copy the entire monorepo into the container
+COPY . .
+
+# Install dependencies for the monorepo
+RUN npm ci
+
+# Build the API project
+RUN npx nx build api --configuration production
+
+# Stage 2: Runtime Image
+FROM node:20-slim AS runner
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy the build output
+COPY --from=builder /workspace/dist/apps/api/ .
+
+# Install only production dependencies
+RUN npm ci
+RUN npm install tslib --save
+
+# Expose the port the API will run on
+EXPOSE 3333
+
+# Command to start the API
+CMD ["node", "main.js"]
