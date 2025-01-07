@@ -55,7 +55,7 @@ const detectLanguage = async (state: typeof StateAnnotation.State) => {
   const promptTemplate = PromptTemplate.fromTemplate(DETECT_LANGUAGE_PROMPT);
   const chain = promptTemplate.pipe(llm);
   const res = await chain.invoke({
-    message: state.messages[state.messages.length - 1],
+    message: state.messages[state.messages.length - 1].content,
   });
   return { lang: res.content };
 };
