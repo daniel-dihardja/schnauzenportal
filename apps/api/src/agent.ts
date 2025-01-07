@@ -11,6 +11,7 @@ import {
 import { PromptTemplate } from '@langchain/core/prompts';
 import { PetVectorSearch } from './vector-search';
 
+// Define the state structure for annotations
 const StateAnnotation = Annotation.Root({
   messages: Annotation<BaseMessage[]>({
     reducer: (left: BaseMessage[], right: BaseMessage | BaseMessage[]) => {
@@ -43,27 +44,49 @@ const StateAnnotation = Annotation.Root({
   }),
 });
 
-function createLLM(): ChatOpenAI {
-  return new ChatOpenAI({
+/**
+ * Creates an instance of ChatOpenAI with predefined configuration.
+ */
+const createLLM = (): ChatOpenAI =>
+  new ChatOpenAI({
     temperature: 0.5,
     modelName: 'gpt-3.5-turbo',
   });
-}
 
-const detectLanguage = async (state: typeof StateAnnotation.State) => {
+/**
+ * Detects the language of the most recent user message in the state.
+ * @param state - The state object containing user messages.
+ * @returns The detected language.
+ */
+const detectLanguage = async (
+  state: typeof StateAnnotation.State
+): Promise<{ lang: string }> => {
   const llm = createLLM();
   const promptTemplate = PromptTemplate.fromTemplate(DETECT_LANGUAGE_PROMPT);
   const chain = promptTemplate.pipe(llm);
-  const res = await chain.invoke({
-    message: state.messages[state.messages.length - 1].content,
-  });
-  return { lang: res.content };
+
+  // Convert content to a string if necessary
+  const lastMessageContent = state.messages[state.messages.length - 1].content;
+  const contentString = Array.isArray(lastMessageContent)
+    ? lastMessageContent.map((item) => JSON.stringify(item)).join(' ')
+    : String(lastMessageContent);
+
+  const res = await chain.invoke({ message: contentString });
+  return { lang: res.content.toString() };
 };
 
-const translateMessage = async (state: typeof StateAnnotation.State) => {
+/**
+ * Translates the user's message to German if necessary.
+ * @param state - The state object containing user messages and language.
+ * @returns The translated message.
+ */
+const translateMessage = async (
+  state: typeof StateAnnotation.State
+): Promise<{ translatedMessage: string }> => {
   if (state.lang === 'de') {
     return {
-      translatedMessage: state.messages[state.messages.length - 1].content,
+      translatedMessage:
+        state.messages[state.messages.length - 1].content.toString(),
     };
   }
   const llm = createLLM();
@@ -72,13 +95,20 @@ const translateMessage = async (state: typeof StateAnnotation.State) => {
   );
   const chain = promptTemplate.pipe(llm);
   const res = await chain.invoke({
-    message: state.messages[state.messages.length - 1],
+    message: state.messages[state.messages.length - 1].content,
     lang: state.lang,
   });
-  return { translatedMessage: res.content };
+  return { translatedMessage: res.content.toString() };
 };
 
-const extractFilterValues = async (state: typeof StateAnnotation.State) => {
+/**
+ * Extracts filter values from the user's translated message.
+ * @param state - The state object containing the translated message.
+ * @returns The extracted filter values.
+ */
+const extractFilterValues = async (
+  state: typeof StateAnnotation.State
+): Promise<{ filter: Filter }> => {
   const llm = createLLM();
   const promptTemplate = PromptTemplate.fromTemplate(
     EXTRACT_FILTER_VALUES_PROMPT
@@ -90,7 +120,14 @@ const extractFilterValues = async (state: typeof StateAnnotation.State) => {
   return { filter: JSON.parse(res.content.toString()) };
 };
 
-const vectorQuery = async (state: typeof StateAnnotation.State) => {
+/**
+ * Performs a vector query to find matching pets based on the user's translated message and filter.
+ * @param state - The state object containing the query and filter.
+ * @returns The search results.
+ */
+const vectorQuery = async (
+  state: typeof StateAnnotation.State
+): Promise<{ pets: Pet[] }> => {
   const query = state.translatedMessage;
   const filter = state.filter;
   const vs = new PetVectorSearch();
@@ -98,7 +135,14 @@ const vectorQuery = async (state: typeof StateAnnotation.State) => {
   return { pets };
 };
 
-const composeAnswer = async (state: typeof StateAnnotation.State) => {
+/**
+ * Composes a response to the user based on the language, message, and pet search results.
+ * @param state - The state object containing context and search results.
+ * @returns The composed response.
+ */
+const composeAnswer = async (
+  state: typeof StateAnnotation.State
+): Promise<{ response: ResponseType }> => {
   const lang = state.lang;
   const pets = state.pets;
   const message = state.messages[state.messages.length - 1].content;
@@ -113,6 +157,9 @@ const composeAnswer = async (state: typeof StateAnnotation.State) => {
   return { response: JSON.parse(res.content.toString()) };
 };
 
+/**
+ * Defines a state graph workflow to process user queries through various stages.
+ */
 const workflow = new StateGraph(StateAnnotation)
   .addNode('detectLanguage', detectLanguage)
   .addNode('translateMessage', translateMessage)
@@ -126,4 +173,7 @@ const workflow = new StateGraph(StateAnnotation)
   .addEdge('vectorQuery', 'composeAnswer')
   .addEdge('composeAnswer', '__end__');
 
+/**
+ * The compiled graph representing the workflow for processing user queries.
+ */
 export const graph = workflow.compile({});
