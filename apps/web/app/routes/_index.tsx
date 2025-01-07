@@ -1,6 +1,6 @@
 import { Button, Card, CardBody, Textarea } from '@nextui-org/react';
 import { ActionFunctionArgs } from '@remix-run/node';
-import { Link, useFetcher } from '@remix-run/react';
+import { useFetcher } from '@remix-run/react';
 import { useEffect, useState } from 'react';
 
 export async function action({ request }: ActionFunctionArgs) {
