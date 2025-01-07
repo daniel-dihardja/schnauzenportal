@@ -57,7 +57,7 @@ Response Format:
 1. General Answer: Provide a concise, helpful general response addressing the user's query.
 2. Individual Pet Answers: For each pet, create a specific answer tailored to the query, following this format:
    {{
-     "pet_id": "<The ID of the pet>",
+     "petId": "<The ID of the pet>",
      "image": "<URL of the pet's image>",
      "url": "<URL of the pet's profile>",
      "answer": "<Your specific answer about the pet>"
@@ -65,10 +65,10 @@ Response Format:
 
 Final Output Format (as a JSON object):
 {{
-  "general_answer": "<Your general answer here>",
-  "individual_pet_answers": [
+  "generalAnswer": "<Your general answer here>",
+  "individualPetAnswers": [
     {{
-      "pet_id": "<The ID of the pet>",
+      "petId": "<The ID of the pet>",
       "image": "<URL of the pet's image>",
       "url": "<URL of the pet's profile>",
       "answer": "<Your specific answer about the pet>"
