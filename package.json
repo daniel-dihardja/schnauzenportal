@@ -6,7 +6,13 @@
   "private": true,
   "dependencies": {
     "axios": "^1.6.0",
-    "express": "^4.18.1"
+    "express": "^4.18.1",
+    "@langchain/core": "^0.3.27",
+    "@langchain/langgraph": "^0.2.38",
+    "@langchain/openai": "^0.3.16",
+    "dotenv": "^16.4.7",
+    "mongodb": "^6.12.0",
+    "openai": "^4.77.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.8.0",
@@ -38,6 +44,8 @@
     "tslib": "^2.3.0",
     "typescript": "~5.6.2",
     "typescript-eslint": "^8.13.0",
-    "webpack-cli": "^5.1.4"
+    "webpack-cli": "^5.1.4",
+    "@types/mongodb": "^4.0.6",
+    "@types/dotenv": "^6.1.1"
   }
 }
