@@ -7,6 +7,7 @@ import {
 } from '@remix-run/react';
 import type { MetaFunction, LinksFunction } from '@remix-run/node';
 import twStyles from './tailwind.css?url';
+import { NextUIProvider } from '@nextui-org/react';
 
 export const meta: MetaFunction = () => [
   {
@@ -38,9 +39,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        {children}
-        <ScrollRestoration />
-        <Scripts />
+        <NextUIProvider>
+          {children}
+          <ScrollRestoration />
+          <Scripts />
+        </NextUIProvider>
       </body>
     </html>
   );
