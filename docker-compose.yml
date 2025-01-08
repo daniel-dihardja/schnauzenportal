@@ -1,0 +1,30 @@
+version: "3.8"
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.api
+    container_name: sznportal_api
+    env_file:
+      - .env # Load environment variables from the .env file
+    ports:
+      - "3333:3333" # Expose the API on port 3333
+    networks:
+      - sznportal_network
+
+  web:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.web
+    container_name: sznportal_web
+    ports:
+      - "3000:3000" # Expose the web app on port 3000
+    networks:
+      - sznportal_network
+    environment:
+      - API_URL=http://sznportal_api:3333/search 
+
+networks:
+  sznportal_network:
+    driver: bridge
