@@ -1,7 +1,9 @@
 {
   "private": true,
   "name": "web",
-  "scripts": {},
+  "scripts": {
+    "start": "remix-serve ./build/server/index.js"
+  },
   "type": "module",
   "dependencies": {
     "@remix-run/node": "^2.14.0",
@@ -9,7 +11,9 @@
     "@remix-run/serve": "^2.14.0",
     "isbot": "^4.4.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "@nextui-org/react": "^2.6.11",
+    "framer-motion": "^11.16.0"
   },
   "devDependencies": {
     "@remix-run/dev": "^2.14.0",

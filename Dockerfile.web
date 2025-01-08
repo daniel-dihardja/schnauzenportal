@@ -1,0 +1,33 @@
+# Stage 1: Build the Remix application
+FROM node:20-slim AS builder
+
+# Set the working directory
+WORKDIR /workspace
+
+# Copy package.json and package-lock.json
+COPY . .
+
+# Install dependencies
+RUN npm ci
+
+# Build the Remix app
+RUN npx nx build web --configuration production
+
+# Stage 2: Create a lightweight production image
+FROM node:20-slim AS runner
+
+# Set the working directory
+WORKDIR /app
+
+# Copy built files and node_modules from the builder
+COPY --from=builder /workspace/apps/web/build/ ./build
+COPY --from=builder /workspace/apps/web/public/ ./public
+COPY --from=builder /workspace/apps/web/package.json ./
+
+RUN npm install --production
+
+# Expose the port your Remix app runs on
+EXPOSE 3000
+
+# Define the command to start the Remix app
+CMD ["npm", "run", "start"]
