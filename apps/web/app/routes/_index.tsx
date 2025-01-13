@@ -10,7 +10,6 @@ export async function action({ request }: ActionFunctionArgs) {
   if (!apiUrl) {
     throw new Error('API_URL is not set in the environment variables');
   }
-  console.log('apiUrl: ', apiUrl);
   const response = await fetch(apiUrl as string, {
     method: 'POST',
     headers: {
