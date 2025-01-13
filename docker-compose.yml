@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile.api
-    container_name: sznportal_api
+    # container_name: sznportal_api
     env_file:
       - .env # Load environment variables from the .env file
     ports:
@@ -15,13 +15,13 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile.web
-    container_name: sznportal_web
+    # container_name: sznportal_web
     ports:
       - "3000:3000" # Expose the web app on port 3000
     networks:
       - sznportal_network
     environment:
-      - API_URL=http://sznportal_api:3333/search 
+      - API_URL=http://api:3333/search 
 
   nginx:
     image: nginx:latest
