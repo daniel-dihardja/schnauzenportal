@@ -10,8 +10,10 @@ import twStyles from './tailwind.css?url';
 import { NextUIProvider } from '@nextui-org/react';
 
 export const meta: MetaFunction = () => [
+  { title: 'Schnauzenportal' },
   {
-    title: 'New Remix App',
+    name: 'description',
+    content: 'Dein Zugang zu Tierheimen in ganz Deutschland.',
   },
 ];
 
