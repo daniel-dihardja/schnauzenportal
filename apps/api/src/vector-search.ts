@@ -8,6 +8,12 @@ if (process.env.ENV !== 'production') {
   dotenv.config();
 }
 
+/**
+ * A service class that provides functionality for searching pets using vector search and OpenAI embeddings.
+ *
+ * This class connects to a MongoDB database, generates text embeddings using the OpenAI API, and
+ * performs vector-based search queries to find matching pets based on user input and filters.
+ */
 export class PetVectorSearch {
   private dbUri: string;
   private dbName: string;
@@ -16,6 +22,10 @@ export class PetVectorSearch {
   private openaiClient: OpenAI;
   private collection: Collection | null = null;
 
+  /**
+   * Creates an instance of the PetVectorSearch class.
+   * Initializes environment variables and sets up the OpenAI client.
+   */
   constructor() {
     this.dbUri = process.env.ATLAS_MONGODB_URI as string;
     this.dbName = process.env.DB as string;
@@ -27,7 +37,12 @@ export class PetVectorSearch {
     });
   }
 
-  // Lazily initialize and return the MongoDB collection
+  /**
+   * Lazily initializes and retrieves the MongoDB collection.
+   * Ensures that the database connection is only established when needed.
+   *
+   * @returns {Promise<Collection>} The MongoDB collection instance.
+   */
   private async getCollection(): Promise<Collection> {
     if (!this.collection) {
       const client = new MongoClient(this.dbUri);
@@ -38,7 +53,12 @@ export class PetVectorSearch {
     return this.collection;
   }
 
-  // Generate embeddings asynchronously using OpenAI API
+  /**
+   * Generates vector embeddings for the given text using the OpenAI API.
+   *
+   * @param {string} text - The input text to generate embeddings for.
+   * @returns {Promise<number[]>} A promise that resolves to the embedding vector.
+   */
   private async getGptEmbeddings(text: string): Promise<number[]> {
     const response = await this.openaiClient.embeddings.create({
       model: 'text-embedding-ada-002',
@@ -47,7 +67,13 @@ export class PetVectorSearch {
     return response.data[0].embedding;
   }
 
-  // Perform vector search for pets
+  /**
+   * Performs a vector search for pets based on a user query and optional filter criteria.
+   *
+   * @param {string} query - The user query describing the pet.
+   * @param {Filter} filterObj - An optional filter object for additional search constraints.
+   * @returns {Promise<Pet[]>} A promise that resolves to an array of matching pets.
+   */
   public async searchPets(query: string, filterObj: Filter): Promise<Pet[]> {
     const collection = await this.getCollection();
     const queryEmbedding = await this.getGptEmbeddings(query);
