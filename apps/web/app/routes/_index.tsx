@@ -59,16 +59,16 @@ export default function Index() {
               `}
           </style>
           <Textarea
-            label="Describe the Pet"
+            label="Schreiben Sie hier, wonach Sie suchen:"
             id="pet-description"
             name="message"
-            placeholder="E.g., I'm looking for a friendly dog. Ideally, the dog should be playful, enjoy outdoor activities, and have the potential to learn tricks like fetching items."
+            placeholder="Beispiel: „Ich suche einen Hund, der möglicherweise Verhaltensprobleme hat oder als schwierig gilt. Ich habe Erfahrung mit solchen Hunden, keine Kinder im Haushalt und bin bereit, mit ihm zu arbeiten.“"
             fullWidth={true}
             size="lg"
             minRows={3}
             onChange={(e) => setMessage(e.target.value)}
             variant="flat"
-            description="Please provide a detailed description of the pet you are looking for."
+            description="Beschreiben Sie das gesuchte Haustier und Ihre Wohnsituation, z. B. „eine aktive Katze auf dem Land neben einem Wald“."
             classNames={{
               label: 'text-lg font-bold px-2',
               input: 'p-2',
@@ -79,7 +79,7 @@ export default function Index() {
         <div className="flex justify-center">
           <Button
             type="submit"
-            className={`w-full md:w-64 p-6 bg-black text-white ${
+            className={`w-full md:w-64 p-6 mt-4 bg-black text-white ${
               !isButtonEnabled
                 ? 'opacity-30 cursor-not-allowed'
                 : 'hover:bg-gray-800'
@@ -88,7 +88,7 @@ export default function Index() {
             disabled={!isButtonEnabled}
             isLoading={fetcher.state === 'submitting'}
           >
-            <strong>Find Matching Pets</strong>
+            <strong>Passende Haustiere finden</strong>
           </Button>
         </div>
       </fetcher.Form>
