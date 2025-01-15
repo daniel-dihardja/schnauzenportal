@@ -2,7 +2,10 @@
   "name": "@schnauzenportal/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "serve:api": "npx nx run api:serve --configuration=development",
+    "serve:web": "npx nx run web:dev"
+  },
   "private": true,
   "dependencies": {
     "@langchain/core": "^0.3.27",
