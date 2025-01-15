@@ -42,7 +42,7 @@ interface FetcherData {
   individualPetAnswers?: Pet[];
 }
 
-export default function Index() {
+export default function Search() {
   const fetcher = useFetcher<FetcherData>();
   const [message, setMessage] = useState('');
   const [isButtonEnabled, setIsButtonEnabled] = useState(false);
@@ -140,11 +140,12 @@ export default function Index() {
                         <strong>{pet.id}</strong>
                       </h3>
                       <p>{pet.answer}</p>
-                      <p className=" pt-2">
+                      <p className="pt-2">
                         <a
                           className="text-blue-600 underline"
                           href={pet.url}
                           target="_blank"
+                          rel="noreferrer"
                         >
                           {pet.url}
                         </a>
