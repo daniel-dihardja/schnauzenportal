@@ -76,14 +76,10 @@ export default function Search() {
       </div>
       <div className="flex justify-center">
         <Button
+          color="primary"
           type="submit"
-          className={`w-full md:w-64 p-6 mt-4 bg-black text-white ${
-            !isButtonEnabled
-              ? 'opacity-30 cursor-not-allowed'
-              : 'hover:bg-gray-800'
-          }`}
-          style={!isButtonEnabled ? { pointerEvents: 'none' } : {}}
-          disabled={!isButtonEnabled}
+          className="w-full md:w-64 p-6 mt-4"
+          isDisabled={!isButtonEnabled}
           isLoading={fetcher.state === 'submitting'}
         >
           <strong>Passende Haustiere finden</strong>
