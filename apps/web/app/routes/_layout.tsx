@@ -54,16 +54,19 @@ function LayoutContent() {
           </NavbarItem>
         </NavbarContent>
 
-        {/* Filter Button (Only Show on Browse Route) */}
-        <NavbarContent justify="end">
-          {location.pathname === '/' && (
+        {/* Mobile Filter Button (Only Show on Homepage `/`) */}
+        {location.pathname === '/' && (
+          <NavbarContent justify="end">
             <NavbarItem>
-              <Button onClick={openFilter} className="sm:hidden">
+              <Button
+                onPress={openFilter}
+                className="sm:hidden px-3 py-2 rounded"
+              >
                 Open Filter
               </Button>
             </NavbarItem>
-          )}
-        </NavbarContent>
+          </NavbarContent>
+        )}
 
         {/* Mobile Navigation */}
         <NavbarMenu className="mt-8">
