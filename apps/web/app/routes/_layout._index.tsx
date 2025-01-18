@@ -150,10 +150,10 @@ export default function Browse() {
                 </DrawerBody>
 
                 <DrawerFooter>
-                  <Button color="danger" variant="light" onPress={onClose}>
+                  {/* <Button color="danger" variant="light" onPress={onClose}>
                     Schließen
-                  </Button>
-                  <Button color="primary" onPress={onClose}>
+                  </Button> */}
+                  <Button className="w-full" color="primary" onPress={onClose}>
                     Anwenden
                   </Button>
                 </DrawerFooter>

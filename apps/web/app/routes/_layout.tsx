@@ -59,8 +59,9 @@ function LayoutContent() {
           <NavbarContent justify="end">
             <NavbarItem>
               <Button
+                color="primary"
                 onPress={openFilter}
-                className="sm:hidden px-3 py-2 rounded"
+                className="sm:hidden"
               >
                 Open Filter
               </Button>
