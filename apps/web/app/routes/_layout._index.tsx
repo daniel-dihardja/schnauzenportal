@@ -58,7 +58,7 @@ export default function Browse() {
           </div>
         </CardBody>
       </Card> */}
-      <div className="grid grid-cols-12 gap-4 mt-2">
+      <div className="grid grid-cols-12 gap-4">
         <div className="md:col-span-3">
           <Card className="mb-2" radius="sm">
             <CardHeader>
