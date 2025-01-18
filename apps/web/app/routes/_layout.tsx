@@ -7,13 +7,16 @@ import {
   NavbarMenuToggle,
   NavbarMenu,
   NavbarMenuItem,
+  Button,
 } from '@nextui-org/react';
 import { Outlet, useLocation } from '@remix-run/react';
 import { useState } from 'react';
+import { FilterProvider, useFilter } from '../context/FilterContext'; // Import Filter Context
 
-export default function Layout() {
+function LayoutContent() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const location = useLocation(); // Get the current route
+  const location = useLocation();
+  const { openFilter } = useFilter(); // Get filter control from context
 
   return (
     <div className="mx-auto px-2 max-w-[1024px] mt-8">
@@ -26,6 +29,7 @@ export default function Layout() {
           aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
           className="sm:hidden"
         />
+
         <NavbarBrand>
           <p className="font-bold text-inherit">Schnauzenportal</p>
         </NavbarBrand>
@@ -48,6 +52,17 @@ export default function Layout() {
               AI Suche
             </Link>
           </NavbarItem>
+        </NavbarContent>
+
+        {/* Filter Button (Only Show on Browse Route) */}
+        <NavbarContent justify="end">
+          {location.pathname === '/' && (
+            <NavbarItem>
+              <Button onClick={openFilter} className="sm:hidden">
+                Open Filter
+              </Button>
+            </NavbarItem>
+          )}
         </NavbarContent>
 
         {/* Mobile Navigation */}
@@ -80,5 +95,14 @@ export default function Layout() {
         <Outlet /> {/* Renders child routes */}
       </main>
     </div>
+  );
+}
+
+// Wrap LayoutContent with FilterProvider
+export default function Layout() {
+  return (
+    <FilterProvider>
+      <LayoutContent />
+    </FilterProvider>
   );
 }
