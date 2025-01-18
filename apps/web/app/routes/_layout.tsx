@@ -11,7 +11,7 @@ import { Outlet } from '@remix-run/react';
 export default function Layout() {
   return (
     <div className="mx-auto px-2 max-w-[1024px] mt-8">
-      <Navbar isBordered={true}>
+      <Navbar isBordered={true} className="mb-4">
         <NavbarBrand>
           <p className="font-bold text-inherit">Schnauzenportal</p>
         </NavbarBrand>
