@@ -4,7 +4,6 @@ import {
   CardBody,
   CardHeader,
   Checkbox,
-  Divider,
   Select,
   SelectItem,
 } from '@nextui-org/react';
@@ -25,41 +24,8 @@ export default function Browse() {
   ];
   return (
     <div>
-      {/* <Card>
-        <CardBody className="grid grid-cols-12 gap-4">
-          <div className="col-span-12 md:col-span-4">
-            <Select label="Tierheim" selectionMode="multiple">
-              {shelters.map((shelter) => (
-                <SelectItem key={shelter.key}>{shelter.label}</SelectItem>
-              ))}
-            </Select>
-          </div>
-          <div className="col-span-12 md:col-span-2">
-            <Select label="Select an animal" selectionMode="multiple">
-              {animals.map((animal) => (
-                <SelectItem key={animal.key}>{animal.label}</SelectItem>
-              ))}
-            </Select>
-          </div>
-          <div className="col-span-12 md:col-span-2">
-            <Select label="Kategorie" selectionMode="multiple">
-              {sizes.map((size) => (
-                <SelectItem key={size.key}>{size.label}</SelectItem>
-              ))}
-            </Select>
-          </div>
-          <div className="col-span-12 md:col-span-2">
-            <Button className="w-full h-12 md:h-full">Anwenden</Button>
-          </div>
-          <div className="col-span-12 md:col-span-2">
-            <Button className="w-full h-12 md:h-full" variant="light">
-              Zurücksetzen
-            </Button>
-          </div>
-        </CardBody>
-      </Card> */}
       <div className="grid grid-cols-12 gap-4">
-        <div className="md:col-span-3">
+        <div className="hidden sm:col-span-3 sm:block">
           <Card className="mb-2" radius="sm">
             <CardHeader>
               <strong>Tierheime</strong>
@@ -116,7 +82,7 @@ export default function Browse() {
             </CardBody>
           </Card>
         </div>
-        <div className="md:col-span-9">
+        <div className="col-span-12 md:col-span-9">
           <h1>Browse all Pets</h1>
         </div>
       </div>
