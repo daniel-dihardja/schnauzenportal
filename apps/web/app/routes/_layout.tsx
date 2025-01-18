@@ -60,7 +60,12 @@ function LayoutContent() {
             <NavbarItem>
               <Button
                 color="primary"
-                onPress={openFilter}
+                onPress={() => {
+                  if (!isMenuOpen) {
+                    openFilter();
+                  }
+                }}
+                isDisabled={isMenuOpen}
                 className="sm:hidden"
               >
                 Open Filter
