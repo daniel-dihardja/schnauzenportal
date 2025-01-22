@@ -10,7 +10,8 @@ if (process.env.ENV !== 'production') {
 /**
  * A service class that provides functionality for querying pets in MongoDB.
  *
- * This class connects to a MongoDB database and retrieves pets based on optional filters.
+ * This class connects to a MongoDB database and retrieves pets based on optional filters,
+ * while **excluding the "embedding" property** to reduce response size.
  */
 export class PetQuery {
   private dbUri: string;
@@ -45,7 +46,8 @@ export class PetQuery {
   }
 
   /**
-   * Retrieves all pets from the MongoDB collection with optional filtering.
+   * Retrieves all pets from the MongoDB collection with optional filtering,
+   * while **excluding the "embedding" field** to reduce response size.
    *
    * @param {Filter} filterObj - Optional filter object to refine results.
    * @returns {Promise<Pet[]>} A promise that resolves to an array of pets.
@@ -53,8 +55,8 @@ export class PetQuery {
   public async getAllPets(filterObj: Filter = {}): Promise<Pet[]> {
     const collection = await this.getCollection();
 
-    // Find all pets with optional filtering
-    const cursor = collection.find(filterObj);
+    // Find all pets with optional filtering, but exclude the "embedding" field
+    const cursor = collection.find(filterObj, { projection: { embedding: 0 } });
     const results: Pet[] = [];
 
     for await (const doc of cursor) {
