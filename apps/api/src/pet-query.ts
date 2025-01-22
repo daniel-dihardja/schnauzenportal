@@ -2,16 +2,12 @@ import { MongoClient, Db, Collection } from 'mongodb';
 import * as dotenv from 'dotenv';
 import { Filter, Pet } from './schemas';
 
-// Load environment variables if not in production
 if (process.env.ENV !== 'production') {
   dotenv.config();
 }
 
 /**
- * A service class that provides functionality for querying pets in MongoDB.
- *
- * This class connects to a MongoDB database and retrieves pets based on optional filters,
- * while **excluding the "embedding" property** to reduce response size.
+ * A service class for querying pets in MongoDB with pagination support.
  */
 export class PetQuery {
   private dbUri: string;
@@ -19,22 +15,12 @@ export class PetQuery {
   private collectionName: string;
   private collection: Collection<Pet> | null = null;
 
-  /**
-   * Creates an instance of the PetQuery class.
-   * Initializes environment variables.
-   */
   constructor() {
     this.dbUri = process.env.ATLAS_MONGODB_URI as string;
     this.dbName = process.env.DB as string;
     this.collectionName = process.env.COLLECTION as string;
   }
 
-  /**
-   * Lazily initializes and retrieves the MongoDB collection.
-   * Ensures that the database connection is only established when needed.
-   *
-   * @returns {Promise<Collection<Pet>>} The MongoDB collection instance.
-   */
   private async getCollection(): Promise<Collection<Pet>> {
     if (!this.collection) {
       const client = new MongoClient(this.dbUri);
@@ -46,19 +32,26 @@ export class PetQuery {
   }
 
   /**
-   * Retrieves all pets from the MongoDB collection with optional filtering,
-   * while **excluding the "embedding" field** to reduce response size.
+   * Retrieves pets with pagination support.
    *
-   * @param {Filter} filterObj - Optional filter object to refine results.
-   * @returns {Promise<Pet[]>} A promise that resolves to an array of pets.
+   * @param {Filter} filterObj - Optional filter object.
+   * @param {number} limit - Number of results per request.
+   * @param {number} skip - Number of results to skip (for pagination).
+   * @returns {Promise<Pet[]>} A list of paginated pets.
    */
-  public async getAllPets(filterObj: Filter = {}): Promise<Pet[]> {
+  public async getAllPets(
+    filterObj: Filter = {},
+    limit = 10,
+    skip = 0
+  ): Promise<Pet[]> {
     const collection = await this.getCollection();
 
-    // Find all pets with optional filtering, but exclude the "embedding" field
-    const cursor = collection.find(filterObj, { projection: { embedding: 0 } });
-    const results: Pet[] = [];
+    const cursor = collection
+      .find(filterObj, { projection: { embedding: 0 } }) // Exclude "embedding"
+      .limit(limit)
+      .skip(skip);
 
+    const results: Pet[] = [];
     for await (const doc of cursor) {
       results.push(doc);
     }

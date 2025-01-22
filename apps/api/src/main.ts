@@ -1,7 +1,7 @@
 import { HumanMessage } from '@langchain/core/messages';
 import express from 'express';
 import { graph } from './agent';
-import { PetQuery } from './petQuery'; // Import PetQuery class
+import { PetQuery } from './pet-query'; // Import PetQuery class
 
 const app = express();
 app.use(express.json()); // For parsing JSON payloads
@@ -31,7 +31,10 @@ app.post('/search', async (req, res) => {
 app.get('/browse', async (req, res) => {
   try {
     const filter = req.query as any; // Extract query parameters
-    const pets = await petQuery.getAllPets(filter);
+    const limit = parseInt(req.query.limit as string) || 10; // Default limit: 10
+    const skip = parseInt(req.query.skip as string) || 0; // Default skip: 0
+
+    const pets = await petQuery.getAllPets(filter, limit, skip);
     res.json(pets);
   } catch (error) {
     console.error(error);
