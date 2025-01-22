@@ -2,6 +2,7 @@ import { HumanMessage } from '@langchain/core/messages';
 import express from 'express';
 import { graph } from './agent';
 import { PetQuery } from './pet-query'; // Import PetQuery class
+import { Filter } from './schemas';
 
 const app = express();
 app.use(express.json()); // For parsing JSON payloads
@@ -30,14 +31,21 @@ app.post('/search', async (req, res) => {
 // Browse API - Retrieves a list of pets with optional filtering
 app.get('/browse', async (req, res) => {
   try {
-    const filter = req.query as any; // Extract query parameters
-    const limit = parseInt(req.query.limit as string) || 10; // Default limit: 10
-    const skip = parseInt(req.query.skip as string) || 0; // Default skip: 0
+    const limit = req.query.limit
+      ? parseInt(req.query.limit as string, 10)
+      : 10;
+    const skip = req.query.skip ? parseInt(req.query.skip as string, 10) : 0;
 
+    const filter: Filter = {};
+    if (req.query.type) {
+      filter.type = req.query.type as string;
+    }
+
+    // Fetch paginated pets
     const pets = await petQuery.getAllPets(filter, limit, skip);
     res.json(pets);
   } catch (error) {
-    console.error(error);
+    console.error('Error retrieving pets:', error);
     res.status(500).json({ error: 'Error retrieving pets' });
   }
 });
