@@ -19,7 +19,8 @@ function LayoutContent() {
   const { openFilter } = useFilter(); // Get filter control from context
 
   return (
-    <div className="mx-auto px-2 max-w-[1024px] mt-8">
+    <>
+      {' '}
       <Navbar
         isBordered={true}
         className="mb-4"
@@ -99,11 +100,12 @@ function LayoutContent() {
           </NavbarMenuItem>
         </NavbarMenu>
       </Navbar>
-
-      <main>
-        <Outlet /> {/* Renders child routes */}
-      </main>
-    </div>
+      <div className="mx-auto px-2 max-w-[1024px] mt-8">
+        <main>
+          <Outlet /> {/* Renders child routes */}
+        </main>
+      </div>
+    </>
   );
 }
 
