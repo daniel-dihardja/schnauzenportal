@@ -61,7 +61,7 @@ export default function Index() {
             label="Schreiben Sie hier, wonach Sie suchen:"
             id="pet-description"
             name="message"
-            placeholder="Beispiel: „Ich suche einen Hund, der möglicherweise Verhaltensprobleme hat oder als schwierig gilt. Ich habe Erfahrung mit solchen Hunden, keine Kinder im Haushalt und bin bereit, mit ihm zu arbeiten.“"
+            placeholder="Beispiel: „Ich suche einen Hund, der möglicherweise Verhaltensprobleme hat oder als schwierig gilt. Ich habe Erfahrung mit solchen Hunden und bin bereit, mit ihm zu arbeiten.“"
             fullWidth={true}
             size="lg"
             minRows={3}
