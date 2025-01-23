@@ -108,8 +108,8 @@ function FilterSidebar({ shelters, animals, sizes }: FilterSidebarProps) {
         ))}
       </FilterCard>
 
-      {/* Buttons inside a Card for consistency */}
-      <Card className="mb-2" radius="sm">
+      {/* Buttons inside a Card - Hidden on mobile, visible on desktop (sm) */}
+      <Card className="mb-2 hidden sm:block" radius="sm">
         <CardBody className="flex flex-col gap-2">
           <Button className="w-full" color="primary">
             Anwenden
