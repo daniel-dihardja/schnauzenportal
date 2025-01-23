@@ -108,9 +108,13 @@ function FilterSidebar({ shelters, animals, sizes }: FilterSidebarProps) {
         ))}
       </FilterCard>
 
+      {/* Buttons inside a Card for consistency */}
       <Card className="mb-2" radius="sm">
-        <CardBody>
-          <Button className="w-full h-12 md:h-12" variant="light">
+        <CardBody className="flex flex-col gap-2">
+          <Button className="w-full" color="primary">
+            Anwenden
+          </Button>
+          <Button className="w-full" variant="light">
             Zurücksetzen
           </Button>
         </CardBody>
@@ -143,9 +147,16 @@ function FilterDrawer({
               />
             </DrawerBody>
             <DrawerFooter>
-              <Button className="w-full" color="primary" onPress={close}>
-                Anwenden
-              </Button>
+              <Card className="w-full" radius="sm">
+                <CardBody className="flex flex-col gap-2">
+                  <Button className="w-full" color="primary" onPress={close}>
+                    Anwenden
+                  </Button>
+                  <Button className="w-full" variant="light">
+                    Zurücksetzen
+                  </Button>
+                </CardBody>
+              </Card>
             </DrawerFooter>
           </>
         )}
