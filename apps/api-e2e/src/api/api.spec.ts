@@ -19,6 +19,14 @@ describe('Schnauzenportal API Tests', () => {
    * Test the /browse endpoint to verify pagination and filtering.
    */
   describe('GET /browse', () => {
+    it('should return a default of 9 pets when no limit is specified', async () => {
+      const res = await axios.get(`${BASE_URL}/browse`);
+
+      expect(res.status).toBe(200);
+      expect(Array.isArray(res.data)).toBe(true);
+      expect(res.data.length).toBeLessThanOrEqual(9); // Ensures up to 9 results
+    });
+
     it('should return a list of pets with default pagination (limit=10, skip=0)', async () => {
       const res = await axios.get(`${BASE_URL}/browse?limit=10&skip=0`);
 
