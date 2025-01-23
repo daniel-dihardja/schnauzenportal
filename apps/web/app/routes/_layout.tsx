@@ -57,7 +57,7 @@ function LayoutContent() {
 
         {/* Mobile Filter Button (Only Show on Homepage `/`) */}
         {location.pathname === '/' && (
-          <NavbarContent justify="end">
+          <NavbarContent justify="end" className="sm:hidden">
             <NavbarItem>
               <Button
                 color="primary"
@@ -67,7 +67,6 @@ function LayoutContent() {
                   }
                 }}
                 isDisabled={isMenuOpen}
-                className="sm:hidden"
               >
                 Open Filter
               </Button>
