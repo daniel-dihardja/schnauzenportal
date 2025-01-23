@@ -31,15 +31,17 @@ app.post('/search', async (req, res) => {
 // Browse API - Retrieves a list of pets with optional filtering
 app.get('/browse', async (req, res) => {
   try {
-    const limit = req.query.limit
-      ? parseInt(req.query.limit as string, 10)
-      : 10;
+    console.log('Raw query params:', req.query); // Debug log
+
+    // Convert query params safely (ensure they are numbers)
+    const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 9;
     const skip = req.query.skip ? parseInt(req.query.skip as string, 10) : 0;
 
+    console.log(`Parsed values - Limit: ${limit}, Skip: ${skip}`); // Debug log
+
+    // Define filters explicitly (avoid passing raw query params)
     const filter: Filter = {};
-    if (req.query.type) {
-      filter.type = req.query.type as string;
-    }
+    if (req.query.type) filter.type = req.query.type as string;
 
     // Fetch paginated pets
     const pets = await petQuery.getAllPets(filter, limit, skip);

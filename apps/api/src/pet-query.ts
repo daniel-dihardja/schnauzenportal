@@ -41,7 +41,7 @@ export class PetQuery {
    */
   public async getAllPets(
     filterObj: Filter = {},
-    limit = 10,
+    limit = 9,
     skip = 0
   ): Promise<Pet[]> {
     const collection = await this.getCollection();
