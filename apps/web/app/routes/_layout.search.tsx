@@ -64,7 +64,7 @@ export default function Search() {
   const pets = fetcher.data?.individualPetAnswers || [];
 
   return (
-    <div className="mx-auto px-2 max-w-[1024px] mt-8">
+    <div>
       <fetcher.Form method="post">
         <div className="grid grid-cols-1 gap-4">
           <Select
