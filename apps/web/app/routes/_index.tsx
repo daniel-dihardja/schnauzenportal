@@ -1,4 +1,11 @@
-import { Button, Card, CardBody, Textarea } from '@nextui-org/react';
+import {
+  Button,
+  Card,
+  CardBody,
+  Select,
+  SelectItem,
+  Textarea,
+} from '@nextui-org/react';
 import { ActionFunctionArgs } from '@remix-run/node';
 import { useFetcher } from '@remix-run/react';
 import { useEffect, useState } from 'react';
@@ -34,6 +41,29 @@ interface FetcherData {
   individualPetAnswers?: Pet[];
 }
 
+const messagePrefixes = [
+  {
+    label: 'Verspielte Katze gesucht [DE]',
+    key: 'Ich suche eine Katze, die besonders verspielt ist und gerne mit Bällen, Federn oder anderen Spielzeugen interagiert. Es wäre schön, wenn sie auch mit anderen Katzen oder sogar mit Hunden spielen kann.',
+  },
+  {
+    label: 'Ruhiger Kuschelkater [DE]',
+    key: 'Ich suche eine Katze, die gerne schläft und entspannt ist. Ein richtiger Schmusekater, der sich gerne auf meinem Schoß zusammenrollt und mit mir entspannt. Am liebsten eine ruhige Katze, die nicht allzu aktiv ist.',
+  },
+  {
+    label: 'Hund mit Talent [DE]',
+    key: 'Ich suche einen Hund, der schnell lernt und Spaß daran hat, neue Tricks zu lernen. Ich möchte mit ihm Agility oder Tricktraining machen und suche daher einen intelligenten und motivierten Hund.',
+  },
+  {
+    label: 'Katze mit Charakter [DE]',
+    key: 'Ich suche eine Katze mit einem besonderen Charakter – vielleicht eine, die gerne „redet“, lustige Eigenheiten hat oder besonders neugierig ist. Ich liebe Katzen mit Persönlichkeit und freue mich auf eine echte kleine Individualistin.',
+  },
+  {
+    label: 'Sportlicher Hund [DE]',
+    key: 'Ich suche einen Hund, der gerne draußen unterwegs ist und mich bei Wanderungen, Joggingrunden oder Fahrradtouren begleitet. Am liebsten eine sportliche Rasse, die gerne aktiv ist und sich viel bewegt.',
+  },
+];
+
 export default function Index() {
   const fetcher = useFetcher<FetcherData>();
   const [message, setMessage] = useState('');
@@ -50,6 +80,11 @@ export default function Index() {
     <div className="mx-auto px-2 max-w-[1024px] mt-8">
       <fetcher.Form method="post">
         <div className="grid grid-cols-1 gap-4">
+          <Select className="w-full sm:w-80" label="Beispielanfragen">
+            {messagePrefixes.map((message) => (
+              <SelectItem key={message.key}>{message.label}</SelectItem>
+            ))}
+          </Select>
           <style>
             {`
                 #petDescription::placeholder {
