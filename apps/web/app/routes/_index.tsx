@@ -44,6 +44,10 @@ interface FetcherData {
 const messagePrefixes = [
   // 🇩🇪 German (Dogs First)
   {
+    label: '🇩🇪 Herausfordernder Hund',
+    key: 'Ich suche einen Hund, der möglicherweise Verhaltensprobleme hat oder als schwierig gilt. Ich habe Erfahrung mit solchen Hunden und bin bereit, mit ihm zu arbeiten.',
+  },
+  {
     label: '🇩🇪 Sportlicher Hund',
     key: 'Ich suche einen Hund, der gerne draußen unterwegs ist und mich bei Wanderungen, Joggingrunden oder Fahrradtouren begleitet. Am liebsten eine sportliche Rasse, die gerne aktiv ist und sich viel bewegt.',
   },
@@ -66,6 +70,10 @@ const messagePrefixes = [
 
   // 🇬🇧 English (Dogs First)
   {
+    label: '🇬🇧 Challenging Dog',
+    key: 'I am looking for a dog that may have behavioral problems or is considered difficult. I have experience with such dogs and am willing to work with them.',
+  },
+  {
     label: '🇬🇧 Sporty Dog',
     key: 'I am looking for a dog that loves being outdoors and can accompany me on hikes, jogging, or cycling tours. Ideally, a sporty breed that enjoys being active and moving a lot.',
   },
@@ -87,6 +95,10 @@ const messagePrefixes = [
   },
 
   // 🇹🇷 Turkish (Cats First, as Cats Have a Strong Cultural Importance)
+  {
+    label: '🇹🇷 Zorlayıcı Köpek',
+    key: 'Davranış sorunları olabilecek veya zor olarak görülen bir köpek arıyorum. Bu tür köpeklerle deneyimim var ve onlarla çalışmaya hazırım.',
+  },
   {
     label: '🇹🇷 Karakterli kedi',
     key: 'Özel bir karaktere sahip bir kedi arıyorum – belki de "konuşmayı" seven, komik alışkanlıkları olan veya özellikle meraklı bir kedi. Kişiliği olan kedileri seviyorum ve gerçek bir küçük bireyi sabırsızlıkla bekliyorum.',
@@ -162,11 +174,11 @@ export default function Index() {
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             variant="flat"
-            description="Beschreiben Sie das gesuchte Haustier und Ihre Wohnsituation, z. B. „eine aktive Katze auf dem Land neben einem Wald“."
+            description="Beschreiben Sie das gesuchte Haustier, z. B. eine ruhige Kuschelkatze oder einen herausfordernden Hund mit Trainingsbedarf."
             classNames={{
               label: 'text-lg font-bold px-2',
               input: 'p-2',
-              description: 'text-center text-gray-400 mt-2',
+              description: 'text-center text-black mt-2',
             }}
           />
         </div>
