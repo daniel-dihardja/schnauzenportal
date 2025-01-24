@@ -120,11 +120,11 @@ export default function Index() {
   }, [message]);
 
   const handleSelectChange = (keys: any) => {
-    const selectedKey = Array.from(keys)[0]; // Get the selected key
+    const selectedKey = Array.from(keys as Set<string>)[0]; // Cast 'keys' to Set<string>
     const selectedMessage =
       messagePrefixes.find((msg) => msg.key === selectedKey)?.key || '';
     setMessage(selectedMessage);
-    setSelectedKeys(new Set([selectedKey])); // Update selected keys
+    setSelectedKeys(new Set<string>([selectedKey])); // Explicitly use Set<string>
   };
 
   const summary = fetcher.data?.generalAnswer || '';
