@@ -123,7 +123,7 @@ export default function Index() {
       {pets.length > 0 && (
         <div>
           <p className="mt-8 text-large">{summary}</p>
-          <div className="columns-1 md:columns-2 gap-4 mt-6">
+          <div className="columns-1 md:columns-2 gap-4 mt-6 mb-4">
             {pets.map((pet: Pet, index: number) => (
               <Card key={index} className="mb-4">
                 <CardBody>
