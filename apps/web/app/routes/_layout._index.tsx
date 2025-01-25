@@ -11,8 +11,31 @@ import {
   DrawerHeader,
   DrawerBody,
   DrawerFooter,
+  Image,
 } from '@nextui-org/react';
 import { useFilter } from '../context/FilterContext'; // Import filter context
+import { LoaderFunction } from '@remix-run/node';
+import { useLoaderData } from '@remix-run/react';
+
+const API_URL = 'http://localhost:3333/browse';
+
+interface Pet {
+  _id: string;
+  name: string;
+  type: string;
+  image?: string;
+  url?: string;
+  breed?: string;
+  age?: number;
+  shelterId?: string;
+}
+
+interface ApiResponse {
+  total: number;
+  skip: number;
+  limit: number;
+  results: Pet[];
+}
 
 interface FilterOption {
   key: string;
@@ -35,8 +58,29 @@ interface FilterCardProps {
   children: React.ReactNode;
 }
 
+/**
+ * Fetches pets from the API using `fetch` (preferred method in Remix).
+ */
+export const loader: LoaderFunction = async () => {
+  try {
+    const response = await fetch(`${API_URL}?skip=0`);
+    if (!response.ok) {
+      throw new Response('Failed to fetch pets', { status: response.status });
+    }
+
+    const data: ApiResponse = await response.json();
+    return Response.json(data);
+  } catch (error) {
+    console.error('Error fetching pets:', error);
+    throw new Response('Failed to load pets', { status: 500 });
+  }
+};
+
 export default function Browse() {
   const { isFilterOpen, closeFilter } = useFilter(); // Get drawer state
+  const { total, skip, limit, results: pets } = useLoaderData<ApiResponse>();
+
+  console.log({ total, skip, limit, pets });
 
   const shelters: FilterOption[] = [
     { key: '0', label: 'Alle' },
@@ -71,7 +115,38 @@ export default function Browse() {
 
         {/* Main Content Area */}
         <div className="col-span-12 md:col-span-9">
-          <h1>Browse all Pets</h1>
+          {/* <h1>Browse all Pets</h1> */}
+          <div className="columns-1 md:columns-3 md:gap-4">
+            {pets.map((pet) => (
+              <div key={pet._id} className="">
+                <Card className="h-full mb-4 cursor-pointer" radius="sm">
+                  <a href={pet.url} target="_blank" rel="noopener noreferrer">
+                    <Image
+                      isZoomed
+                      radius="sm"
+                      alt={`Die Grafik zeigt einen ${
+                        pet.breed ? pet.breed : ''
+                      } Hund namens ${pet.name}`}
+                      className="z-0 w-full h-full object-cover hover:opacity-90 transition-opacity duration-200"
+                      src={pet.image}
+                      loading="lazy"
+                    />
+                  </a>
+                  <CardBody>
+                    <strong className="mt-2">{pet.name}</strong>
+                    <a
+                      href={pet.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 underline"
+                    >
+                      {pet.url}
+                    </a>
+                  </CardBody>
+                </Card>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
