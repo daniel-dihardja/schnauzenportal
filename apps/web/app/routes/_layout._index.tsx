@@ -80,10 +80,7 @@ export default function Browse() {
   const { isFilterOpen, closeFilter } = useFilter(); // Get drawer state
   const { total, skip, limit, results: pets } = useLoaderData<ApiResponse>();
 
-  console.log({ total, skip, limit, pets });
-
   const shelters: FilterOption[] = [
-    { key: '0', label: 'Alle' },
     { key: '123', label: '04158 - Tierheim Leipzig' },
   ];
   const animals: FilterOption[] = [
@@ -158,7 +155,12 @@ function FilterSidebar({ shelters, animals, sizes }: FilterSidebarProps) {
   return (
     <>
       <FilterCard title="Tierheime">
-        <Select label="Tierheim" selectionMode="multiple" radius="sm">
+        <Select
+          label="Tierheim"
+          selectionMode="multiple"
+          radius="sm"
+          value={'123'}
+        >
           {shelters.map((shelter) => (
             <SelectItem key={shelter.key}>{shelter.label}</SelectItem>
           ))}
