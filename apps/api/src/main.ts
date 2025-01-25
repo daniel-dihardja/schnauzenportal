@@ -30,12 +30,8 @@ app.post('/search', async (req, res) => {
 // Browse API - Retrieves a list of pets with optional filtering
 app.get('/browse', async (req, res) => {
   try {
-    //console.log('Raw query params:', req.query);
-
     const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 9;
     const skip = req.query.skip ? parseInt(req.query.skip as string, 10) : 0;
-
-    console.log(`Parsed values - Limit: ${limit}, Skip: ${skip}`);
 
     const filter: Filter<Pet> = {};
     if (req.query.type) filter.type = req.query.type as string;
