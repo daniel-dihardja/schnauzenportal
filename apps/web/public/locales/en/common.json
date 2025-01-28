@@ -1,0 +1,9 @@
+{
+    "texts": {
+        "selectLabel": "Example queries",
+        "textareaLabel": "Describe what you are looking for:",
+        "textareaPlaceholder": "Example: \"I am looking for a dog that may have behavioral problems or is considered difficult. I have experience with such dogs and am willing to work with them.\"",
+        "textareaDescription": "Describe the pet you are looking for, e.g., a calm cuddle cat or a challenging dog in need of training.",
+        "buttonText": "Find suitable pets"
+    }
+}

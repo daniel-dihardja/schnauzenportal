@@ -1,0 +1,9 @@
+{
+    "texts": {
+        "selectLabel": "Beispielanfragen",
+        "textareaLabel": "Schreiben Sie hier, wonach Sie suchen:",
+        "textareaPlaceholder": "Beispiel: „Ich suche einen Hund, der möglicherweise Verhaltensprobleme hat oder als schwierig gilt. Ich habe Erfahrung mit solchen Hunden und bin bereit, mit ihm zu arbeiten.“",
+        "textareaDescription": "Beschreiben Sie das gesuchte Haustier, z. B. eine ruhige Kuschelkatze oder einen herausfordernden Hund mit Trainingsbedarf.",
+        "buttonText": "Passende Haustiere finden"
+    }
+}
