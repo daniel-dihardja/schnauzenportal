@@ -17,12 +17,18 @@
     "dotenv": "^16.4.7",
     "express": "^4.18.1",
     "framer-motion": "^11.16.0",
+    "i18next": "^24.2.2",
+    "i18next-browser-languagedetector": "^8.0.2",
+    "i18next-fs-backend": "^2.6.0",
+    "i18next-http-backend": "^3.0.2",
     "isbot": "^4.4.0",
     "mongodb": "^6.12.0",
     "openai": "^4.77.3",
     "postcss": "^8.4.38",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-i18next": "^15.4.0",
+    "remix-i18next": "^7.0.2",
     "tailwindcss": "^3.3.0"
   },
   "devDependencies": {
