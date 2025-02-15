@@ -60,8 +60,8 @@ export default function Index() {
     setSelectedKeys(new Set<string>([selectedKey])); // Explicitly use Set<string>
   };
 
-  const summary = fetcher.data?.generalAnswer || '';
-  const pets = fetcher.data?.individualPetAnswers || [];
+  const { generalAnswer: summary = '', individualPetAnswers: pets = [] } =
+    fetcher.data || {};
 
   return (
     <div className="mx-auto px-2 max-w-[1024px] mt-8">
@@ -120,7 +120,7 @@ export default function Index() {
         </div>
       </fetcher.Form>
 
-      {pets.length > 0 && (
+      {summary && (
         <div>
           <p className="mt-8 text-large">{summary}</p>
           <div className="columns-1 md:columns-2 gap-4 mt-6 mb-4">
