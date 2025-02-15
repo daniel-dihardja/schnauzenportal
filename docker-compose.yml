@@ -9,6 +9,7 @@ services:
       - "3333:3333" # Expose the API on port 3333
     networks:
       - sznportal_network
+    restart: unless-stopped
 
   web:
     build:
@@ -20,6 +21,7 @@ services:
       - sznportal_network
     environment:
       - API_URL=http://api:3333/search 
+    restart: unless-stopped
 
   nginx:
     image: nginx:latest
