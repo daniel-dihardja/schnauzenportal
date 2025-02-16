@@ -1,15 +1,8 @@
-import { ChatOpenAI } from '@langchain/openai';
 import { Annotation, StateGraph } from '@langchain/langgraph';
 import { BaseMessage } from '@langchain/core/messages';
 import { Filter, Pet, ResponseType } from './schemas';
-import {
-  COMPOSE_RESPONSE_PROMPT,
-  DETECT_LANGUAGE_PROMPT,
-  EXTRACT_FILTER_VALUES_PROMPT,
-  TRANSLATE_USER_QUERY_PROMPT,
-} from './prompt-templates';
-import { PromptTemplate } from '@langchain/core/prompts';
-import { PetVectorSearch } from './vector-search';
+import { PetVectorSearch } from './pet-vector-search.service';
+import { LlmService } from './llm.service';
 
 // Define the state structure for annotations
 export const StateAnnotation = Annotation.Root({
@@ -49,17 +42,10 @@ export const StateAnnotation = Annotation.Root({
  */
 export const detectLanguage = async (
   state: typeof StateAnnotation.State,
-  llm: ChatOpenAI
+  llmService: LlmService
 ): Promise<{ lang: string }> => {
-  const promptTemplate = PromptTemplate.fromTemplate(DETECT_LANGUAGE_PROMPT);
-  const chain = promptTemplate.pipe(llm);
-
-  const lastMessageContent = state.messages[state.messages.length - 1].content;
-  const contentString = Array.isArray(lastMessageContent)
-    ? lastMessageContent.map((item) => JSON.stringify(item)).join(' ')
-    : String(lastMessageContent);
-
-  const res = await chain.invoke({ message: contentString });
+  const message = state.messages[state.messages.length - 1].content;
+  const res = await llmService.detectLanguage(message);
   return { lang: res.content.toString() };
 };
 
@@ -72,7 +58,7 @@ export const detectLanguage = async (
  */
 export const translateMessage = async (
   state: typeof StateAnnotation.State,
-  llm: ChatOpenAI
+  llmService: LlmService
 ): Promise<{ translatedMessage: string }> => {
   if (state.lang === 'de') {
     return {
@@ -80,14 +66,9 @@ export const translateMessage = async (
         state.messages[state.messages.length - 1].content.toString(),
     };
   }
-  const promptTemplate = PromptTemplate.fromTemplate(
-    TRANSLATE_USER_QUERY_PROMPT
-  );
-  const chain = promptTemplate.pipe(llm);
-  const res = await chain.invoke({
-    message: state.messages[state.messages.length - 1].content,
-    lang: state.lang,
-  });
+  const message = state.messages[state.messages.length - 1].content;
+  const res = await llmService.translateMessage(message, state.lang);
+
   return { translatedMessage: res.content.toString() };
 };
 
@@ -100,14 +81,10 @@ export const translateMessage = async (
  */
 export const extractFilterValues = async (
   state: typeof StateAnnotation.State,
-  llm: ChatOpenAI
+  llmService: LlmService
 ): Promise<{ filter: Filter }> => {
-  const promptTemplate = PromptTemplate.fromTemplate(
-    EXTRACT_FILTER_VALUES_PROMPT
-  );
-  const chain = promptTemplate.pipe(llm);
+  const res = await llmService.extractFilterValues(state.translatedMessage);
   try {
-    const res = await chain.invoke({ message: state.translatedMessage });
     return { filter: JSON.parse(res.content.toString()) };
   } catch (error) {
     console.error('Failed to parse filter values:', error);
@@ -145,16 +122,13 @@ export const vectorQuery = async (
  */
 export const composeAnswer = async (
   state: typeof StateAnnotation.State,
-  llm: ChatOpenAI
+  llmService: LlmService
 ): Promise<{ response: ResponseType }> => {
   const lang = state.lang;
   const pets = state.pets;
   const message = state.messages[state.messages.length - 1].content;
-  const promptTemplate = PromptTemplate.fromTemplate(COMPOSE_RESPONSE_PROMPT);
-  const chain = promptTemplate.pipe(llm);
-
+  const res = await llmService.composeAnswer(message, lang, pets);
   try {
-    const res = await chain.invoke({ lang, message, pets });
     return { response: JSON.parse(res.content.toString()) };
   } catch (error) {
     console.error('Failed to generate response:', error);
@@ -176,15 +150,17 @@ export const composeAnswer = async (
  * @returns {StateGraph} The configured LangGraph workflow.
  */
 export const workflowFactory = (
-  llm: ChatOpenAI,
+  llmService: LlmService,
   petVectorSearch: PetVectorSearch
 ) =>
   new StateGraph(StateAnnotation)
-    .addNode('detectLanguage', (state) => detectLanguage(state, llm))
-    .addNode('translateMessage', (state) => translateMessage(state, llm))
-    .addNode('extractFilterValues', (state) => extractFilterValues(state, llm))
+    .addNode('detectLanguage', (state) => detectLanguage(state, llmService))
+    .addNode('translateMessage', (state) => translateMessage(state, llmService))
+    .addNode('extractFilterValues', (state) =>
+      extractFilterValues(state, llmService)
+    )
     .addNode('vectorQuery', (state) => vectorQuery(state, petVectorSearch))
-    .addNode('composeAnswer', (state) => composeAnswer(state, llm))
+    .addNode('composeAnswer', (state) => composeAnswer(state, llmService))
     .addEdge('__start__', 'detectLanguage')
     .addEdge('detectLanguage', 'translateMessage')
     .addEdge('translateMessage', 'extractFilterValues')
@@ -192,10 +168,7 @@ export const workflowFactory = (
     .addEdge('vectorQuery', 'composeAnswer')
     .addEdge('composeAnswer', '__end__');
 
-/**
- * Initializes the LLM service with a predefined model and temperature.
- */
-const llm = new ChatOpenAI({ temperature: 0.5, modelName: 'gpt-3.5-turbo' });
+const llmService = new LlmService();
 
 /**
  * Initializes the vector search service for retrieving pet data.
@@ -205,4 +178,4 @@ const petVectorSearch = new PetVectorSearch();
 /**
  * The compiled graph representing the workflow for processing user queries.
  */
-export const graph = workflowFactory(llm, petVectorSearch).compile({});
+export const graph = workflowFactory(llmService, petVectorSearch).compile();
