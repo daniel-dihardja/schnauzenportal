@@ -17,15 +17,13 @@ import { Pet } from './schemas';
  * This class abstracts the LLM usage for easier dependency injection and testing.
  */
 export class LlmService {
-  private llm: ChatOpenAI;
-
   /**
    * Initializes the LLM service.
    *
    * @param {ChatOpenAI} [llm] - An optional custom ChatOpenAI instance.
    * If not provided, a default instance with `gpt-3.5-turbo` and temperature `0.5` is used.
    */
-  constructor(llm?: ChatOpenAI) {
+  constructor(private llm?: ChatOpenAI) {
     this.llm =
       llm ??
       new ChatOpenAI({
