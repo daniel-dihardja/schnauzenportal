@@ -1,10 +1,70 @@
 import axios from 'axios';
 
-describe('GET /', () => {
-  it('should return a message', async () => {
-    const res = await axios.get(`/`);
+const BASE_URL = 'http://localhost:3333';
 
-    expect(res.status).toBe(200);
-    expect(res.data).toEqual({ message: 'Hello API' });
+jest.setTimeout(30000);
+
+describe('API Tests', () => {
+  describe('Should return a list of pets for valid searches', () => {
+    test.each([
+      { message: 'Ich suche einen Hund zum Adoptieren.' },
+      { message: 'Gibt es Katzen, die ein Zuhause brauchen?' },
+      { message: 'Welche Hunde sind zur Adoption verfügbar' },
+      { message: 'Ich möchte eine Katze adoptieren' },
+    ])(
+      'should return a valid list of pets for message: %s',
+      async ({ message }) => {
+        const requestBody = { message };
+
+        const res = await axios.post(`${BASE_URL}/search`, requestBody);
+
+        expect(res.status).toBe(200); // Ensure the API returns 200
+        expect(res.data).toBeDefined(); // Ensure response exists
+
+        // Validate `generalAnswer` exists and is a string
+        expect(typeof res.data.generalAnswer).toBe('string');
+        expect(res.data.generalAnswer.length).toBeGreaterThan(0);
+
+        // Validate `individualPetAnswers` is an array and contains at least one pet
+        expect(Array.isArray(res.data.individualPetAnswers)).toBe(true);
+        expect(res.data.individualPetAnswers.length).toBeGreaterThan(0);
+
+        // Validate the structure of each pet in `individualPetAnswers`
+        res.data.individualPetAnswers.forEach((pet) => {
+          expect(typeof pet.petId).toBe('string');
+          expect(typeof pet.image).toBe('string');
+          expect(typeof pet.url).toBe('string');
+          expect(typeof pet.answer).toBe('string');
+        });
+      }
+    );
+  });
+
+  describe('Should inform users that only dogs and cats are available', () => {
+    test.each([
+      { message: 'Ich suche einen Papagei zum Adoptieren.' },
+      { message: 'Haben Sie Hamster zur Adoption?' },
+      { message: 'Gibt es Schlangen zur Adoption?' },
+      { message: 'Kann ich ein Meerschweinchen adoptieren?' },
+      { message: 'Ich suche eine Schildkröte als Haustier.' },
+    ])(
+      'should return a generalAnswer and an empty individualPetAnswers list for message: %s',
+      async ({ message }) => {
+        const requestBody = { message };
+
+        const res = await axios.post(`${BASE_URL}/search`, requestBody);
+
+        expect(res.status).toBe(200); // Ensure the API always returns 200
+        expect(res.data).toBeDefined(); // Ensure response exists
+
+        // Check if `generalAnswer` is defined and non-empty
+        expect(typeof res.data.generalAnswer).toBe('string');
+        expect(res.data.generalAnswer.length).toBeGreaterThan(0);
+
+        // Ensure `individualPetAnswers` is an empty array
+        expect(Array.isArray(res.data.individualPetAnswers)).toBe(true);
+        expect(res.data.individualPetAnswers.length).toBe(0);
+      }
+    );
   });
 });
