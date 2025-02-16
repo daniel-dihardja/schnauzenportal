@@ -114,10 +114,15 @@ const extractFilterValues = async (
     EXTRACT_FILTER_VALUES_PROMPT
   );
   const chain = promptTemplate.pipe(llm);
-  const res = await chain.invoke({
-    message: state.translatedMessage,
-  });
-  return { filter: JSON.parse(res.content.toString()) };
+  try {
+    const res = await chain.invoke({
+      message: state.translatedMessage,
+    });
+    return { filter: JSON.parse(res.content.toString()) };
+  } catch (error) {
+    console.error('Failed to parse filter values:', error);
+    return { filter: { type: null } }; // Ensure type is null when parsing fails
+  }
 };
 
 /**
@@ -149,12 +154,25 @@ const composeAnswer = async (
   const llm = createLLM();
   const promptTemplate = PromptTemplate.fromTemplate(COMPOSE_RESPONSE_PROMPT);
   const chain = promptTemplate.pipe(llm);
-  const res = await chain.invoke({
-    lang,
-    message,
-    pets,
-  });
-  return { response: JSON.parse(res.content.toString()) };
+
+  try {
+    const res = await chain.invoke({
+      lang,
+      message,
+      pets,
+    });
+    return { response: JSON.parse(res.content.toString()) };
+  } catch (error) {
+    console.error('Failed to generate response:', error);
+
+    return {
+      response: {
+        generalAnswer:
+          'Es gab ein Problem bei der Verarbeitung deiner Anfrage. Bitte versuche es erneut.',
+        individualPetAnswers: [],
+      },
+    };
+  }
 };
 
 /**
