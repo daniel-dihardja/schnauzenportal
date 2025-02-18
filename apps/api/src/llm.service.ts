@@ -5,7 +5,7 @@ import {
   TRANSLATE_USER_QUERY_PROMPT,
   EXTRACT_FILTER_VALUES_PROMPT,
   COMPOSE_RESPONSE_PROMPT,
-} from './prompt-templates';
+} from './prompts';
 import { PromptTemplate } from '@langchain/core/prompts';
 import { Pet } from './schemas';
 
