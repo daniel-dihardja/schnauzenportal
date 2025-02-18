@@ -3,11 +3,13 @@
 export const DETECT_LANGUAGE_PROMPT = `
 Your task is to detect the language of the following user message and return only the ISO 639-1 language code (e.g., "en" for English, "de" for German, "es" for Spanish).
 
+If the language cannot be determined or the message is gibberish, return "unknown".
+
 <message>
 {message}
 </message>
 
-Output strictly the two-letter language code with no additional text, quotes, or formatting.
+Output strictly the two-letter language code or "unknown" with no additional text, quotes, or formatting.
 `;
 
 // Prompt to translate a user message from a specified language to German
