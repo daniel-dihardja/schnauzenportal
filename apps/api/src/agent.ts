@@ -168,6 +168,9 @@ export const workflowFactory = (
     .addEdge('vectorQuery', 'composeAnswer')
     .addEdge('composeAnswer', '__end__');
 
+/**
+ * Initializes the LLM service for handling language processing tasks.
+ */
 const llmService = new LlmService();
 
 /**
