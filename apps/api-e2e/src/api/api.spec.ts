@@ -67,4 +67,25 @@ describe('API Tests', () => {
       }
     );
   });
+
+  describe('Should return a fallback response when the language is unknown', () => {
+    test('should return a fallback message when the language cannot be detected', async () => {
+      const requestBody = { message: '𓂀𓆑𓈖𓅓𓏏' }; // An example of unknown characters
+
+      const res = await axios.post(`${BASE_URL}/search`, requestBody);
+
+      expect(res.status).toBe(200); // Ensure the API always returns 200
+      expect(res.data).toBeDefined(); // Ensure response exists
+
+      // Ensure the response contains the fallback message
+      expect(typeof res.data.generalAnswer).toBe('string');
+      expect(res.data.generalAnswer).toBe(
+        "I'm sorry, but I couldn't detect the language of your message. Please try again using a supported language."
+      );
+
+      // Ensure `individualPetAnswers` is an empty array
+      expect(Array.isArray(res.data.individualPetAnswers)).toBe(true);
+      expect(res.data.individualPetAnswers.length).toBe(0);
+    });
+  });
 });

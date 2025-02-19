@@ -143,6 +143,24 @@ export const composeAnswer = async (
 };
 
 /**
+ * Handles cases where the language could not be detected.
+ *
+ * @param {typeof StateAnnotation.State} state - The current state.
+ * @returns {Promise<{ response: ResponseType }>} The fallback response.
+ */
+export const fallbackUnknownLanguage = async (): Promise<{
+  response: ResponseType;
+}> => {
+  return {
+    response: {
+      generalAnswer:
+        "I'm sorry, but I couldn't detect the language of your message. Please try again using a supported language.",
+      individualPetAnswers: [],
+    },
+  };
+};
+
+/**
  * Creates a LangGraph workflow with injected dependencies.
  *
  * @param {ChatOpenAI} llm - The LLM service to use.
@@ -161,11 +179,31 @@ export const workflowFactory = (
     )
     .addNode('vectorQuery', (state) => vectorQuery(state, petVectorSearch))
     .addNode('composeAnswer', (state) => composeAnswer(state, llmService))
+    .addNode('fallbackUnknownLanguage', () => fallbackUnknownLanguage()) // Fallback Node
+
+    // Define start
     .addEdge('__start__', 'detectLanguage')
-    .addEdge('detectLanguage', 'translateMessage')
+
+    // Corrected Conditional Edge for Language Detection
+    .addConditionalEdges(
+      'detectLanguage',
+      (state) =>
+        state.lang === 'unknown'
+          ? 'fallbackUnknownLanguage'
+          : 'translateMessage',
+      {
+        fallbackUnknownLanguage: 'fallbackUnknownLanguage',
+        translateMessage: 'translateMessage',
+      }
+    )
+
+    // Continue normal processing
     .addEdge('translateMessage', 'extractFilterValues')
     .addEdge('extractFilterValues', 'vectorQuery')
     .addEdge('vectorQuery', 'composeAnswer')
+
+    // Ensure fallback node ends the process
+    .addEdge('fallbackUnknownLanguage', '__end__')
     .addEdge('composeAnswer', '__end__');
 
 /**
