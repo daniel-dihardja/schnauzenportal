@@ -135,7 +135,7 @@ export const composeAnswer = async (
     return {
       response: {
         generalAnswer:
-          'Es gab ein Problem bei der Verarbeitung deiner Anfrage. Bitte versuche es erneut.',
+          'There was a problem processing your request. Please try again.',
         individualPetAnswers: [],
       },
     };

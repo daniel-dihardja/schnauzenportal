@@ -161,7 +161,7 @@ describe('Agent Functions', () => {
       const result = await composeAnswer(state, llmServiceMock);
       expect(result.response).toEqual({
         generalAnswer:
-          'Es gab ein Problem bei der Verarbeitung deiner Anfrage. Bitte versuche es erneut.',
+          'There was a problem processing your request. Please try again.',
         individualPetAnswers: [],
       });
       expect(llmServiceMock.composeAnswer).toHaveBeenCalledWith(
