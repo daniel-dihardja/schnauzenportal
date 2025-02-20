@@ -88,4 +88,34 @@ describe('API Tests', () => {
       expect(res.data.individualPetAnswers.length).toBe(0);
     });
   });
+
+  describe('Should return a fallback response when the message is not about searching for a pet', () => {
+    test.each([
+      { message: 'Wie ist das Wetter heute?' },
+      { message: 'Kannst du mir ein Rezept für Kuchen geben?' },
+      { message: 'Was sind die besten Sehenswürdigkeiten in Berlin?' },
+      { message: 'Ich habe einen Hund, er ist sehr süß.' },
+      { message: 'Wie programmiere ich eine App?' },
+    ])(
+      'should return a generalAnswer indicating that only pet searches are supported for message: %s',
+      async ({ message }) => {
+        const requestBody = { message };
+
+        const res = await axios.post(`${BASE_URL}/search`, requestBody);
+
+        expect(res.status).toBe(200); // Ensure the API always returns 200
+        expect(res.data).toBeDefined(); // Ensure response exists
+
+        // Ensure the response contains the informative fallback message
+        expect(typeof res.data.generalAnswer).toBe('string');
+        expect(res.data.generalAnswer).toBe(
+          'I can help you find a pet to adopt! Currently, you can search for dogs or cats.'
+        );
+
+        // Ensure `individualPetAnswers` is an empty array
+        expect(Array.isArray(res.data.individualPetAnswers)).toBe(true);
+        expect(res.data.individualPetAnswers.length).toBe(0);
+      }
+    );
+  });
 });

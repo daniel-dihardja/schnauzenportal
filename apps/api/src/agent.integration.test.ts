@@ -1,4 +1,8 @@
-import { detectLanguage, extractFilterValues } from './agent';
+import {
+  detectLanguage,
+  extractFilterValues,
+  checkIfLookingForPet,
+} from './agent';
 import { LlmService } from './llm.service';
 import { BaseMessage } from '@langchain/core/messages';
 
@@ -11,14 +15,18 @@ describe('Agent Integration Tests', () => {
 
   // Function to generate a base state and allow overrides
   const createState = (messages: string[], translatedMessage: string) => ({
-    messages: messages.map((content) => ({ content })) as BaseMessage[],
+    messages: messages.map((content) => ({ content } as BaseMessage)),
     lang: 'de',
     translatedMessage,
+    isLookingForPet: false, // Default value for pet search detection
     filter: {},
     pets: null,
     response: null,
   });
 
+  /**
+   * Tests for language detection
+   */
   describe.each([
     {
       description: 'should detect English when input is in English',
@@ -52,6 +60,9 @@ describe('Agent Integration Tests', () => {
     });
   });
 
+  /**
+   * Tests for pet filter extraction
+   */
   describe.each([
     {
       description: 'should extract filter for "Hund" correctly',
@@ -76,6 +87,42 @@ describe('Agent Integration Tests', () => {
       const state = createState(messages, translatedMessage);
       const result = await extractFilterValues(state, llmService);
       expect(result.filter).toMatchObject(expectedFilter);
+    });
+  });
+
+  /**
+   * Tests for checking if the user is looking for a pet
+   */
+  describe.each([
+    {
+      description: 'should detect pet adoption intent for dog search',
+      messages: ['Ich möchte einen Hund adoptieren.'],
+      translatedMessage: 'Ich möchte einen Hund adoptieren.',
+      expectedIntent: true,
+    },
+    {
+      description: 'should detect pet adoption intent for cat search',
+      messages: ['Gibt es Katzen zur Adoption?'],
+      translatedMessage: 'Gibt es Katzen zur Adoption?',
+      expectedIntent: true,
+    },
+    {
+      description: 'should return false for non-adoption messages',
+      messages: ['Wie ist das Wetter heute?'],
+      translatedMessage: 'Wie ist das Wetter heute?',
+      expectedIntent: false,
+    },
+    {
+      description: 'should return false for general pet-related messages',
+      messages: ['Ich mag Katzen.'],
+      translatedMessage: 'Ich mag Katzen.',
+      expectedIntent: false,
+    },
+  ])('$description', ({ messages, translatedMessage, expectedIntent }) => {
+    it(`should correctly classify pet adoption intent`, async () => {
+      const state = createState(messages, translatedMessage);
+      const result = await checkIfLookingForPet(state, llmService);
+      expect(result.isLookingForPet).toBe(expectedIntent);
     });
   });
 });

@@ -5,6 +5,7 @@ import {
   TRANSLATE_USER_QUERY_PROMPT,
   EXTRACT_FILTER_VALUES_PROMPT,
   COMPOSE_RESPONSE_PROMPT,
+  IS_LOOKING_FOR_PET_PROMPT, // New prompt for intent detection
 } from './prompts';
 import { PromptTemplate } from '@langchain/core/prompts';
 import { Pet } from './schemas';
@@ -60,6 +61,20 @@ export class LlmService {
     );
     const chain = promptTemplate.pipe(this.llm);
     return chain.invoke({ message, lang });
+  }
+
+  /**
+   * Determines if the user's message is about looking for a pet.
+   *
+   * @param {MessageContent} message - The user's message.
+   * @returns {Promise<AIMessageChunk>} "true" if the user is looking for a pet, otherwise "false".
+   */
+  async isLookingForPet(message: MessageContent): Promise<AIMessageChunk> {
+    const promptTemplate = PromptTemplate.fromTemplate(
+      IS_LOOKING_FOR_PET_PROMPT
+    );
+    const chain = promptTemplate.pipe(this.llm);
+    return chain.invoke({ message });
   }
 
   /**

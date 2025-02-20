@@ -19,6 +19,10 @@ export const StateAnnotation = Annotation.Root({
     value: (current, update) => update,
     default: () => '',
   }),
+  isLookingForPet: Annotation<boolean>({
+    value: (current, update) => update,
+    default: () => false,
+  }),
   filter: Annotation<Filter>({
     value: (current, update) => update,
     default: () => ({}),
@@ -70,6 +74,22 @@ export const translateMessage = async (
   const res = await llmService.translateMessage(message, state.lang);
 
   return { translatedMessage: res.content.toString() };
+};
+
+/**
+ * Determines if the user's message is about looking for a pet.
+ *
+ * @param {typeof StateAnnotation.State} state - The current state containing the translated message.
+ * @param {LlmService} llmService - The LLM service used for classification.
+ * @returns {Promise<{ isLookingForPet: boolean }>} True if the message is about looking for a pet.
+ */
+export const checkIfLookingForPet = async (
+  state: typeof StateAnnotation.State,
+  llmService: LlmService
+): Promise<{ isLookingForPet: boolean }> => {
+  const message = state.translatedMessage;
+  const res = await llmService.isLookingForPet(message);
+  return { isLookingForPet: res.content.toString() === 'true' };
 };
 
 /**
@@ -174,6 +194,41 @@ const getNextNodeForLanguageDetection = (
     : 'translateMessage';
 };
 
+/**
+ * Determines the next node based on whether the user is looking for a pet.
+ *
+ * @param {typeof StateAnnotation.State} state - The current state containing the translated message.
+ * @returns {string} The next node in the workflow.
+ *
+ * Possible Returns:
+ * - 'extractFilterValues' → If the message is about looking for a pet.
+ * - 'fallbackNotLookingForPet' → If the message is unrelated to pet adoption.
+ */
+export const getNextNodeForPetSearch = (
+  state: typeof StateAnnotation.State
+): string => {
+  return state.isLookingForPet
+    ? 'extractFilterValues'
+    : 'fallbackNotLookingForPet';
+};
+
+/**
+ * Handles cases where the user's message is not about looking for a pet.
+ *
+ * @returns {Promise<{ response: ResponseType }>} The fallback response.
+ */
+export const fallbackNotLookingForPet = async (): Promise<{
+  response: ResponseType;
+}> => {
+  return {
+    response: {
+      generalAnswer:
+        'I can help you find a pet to adopt! Currently, you can search for dogs or cats.',
+      individualPetAnswers: [],
+    },
+  };
+};
+
 export const workflowFactory = (
   llmService: LlmService,
   petVectorSearch: PetVectorSearch
@@ -181,13 +236,16 @@ export const workflowFactory = (
   new StateGraph(StateAnnotation)
     .addNode('detectLanguage', (state) => detectLanguage(state, llmService))
     .addNode('translateMessage', (state) => translateMessage(state, llmService))
+    .addNode('checkIfLookingForPet', (state) =>
+      checkIfLookingForPet(state, llmService)
+    )
     .addNode('extractFilterValues', (state) =>
       extractFilterValues(state, llmService)
     )
     .addNode('vectorQuery', (state) => vectorQuery(state, petVectorSearch))
     .addNode('composeAnswer', (state) => composeAnswer(state, llmService))
-    .addNode('fallbackUnknownLanguage', () => fallbackUnknownLanguage()) // Fallback Node
-
+    .addNode('fallbackUnknownLanguage', () => fallbackUnknownLanguage())
+    .addNode('fallbackNotLookingForPet', () => fallbackNotLookingForPet())
     // Define start
     .addEdge('__start__', 'detectLanguage')
 
@@ -198,12 +256,18 @@ export const workflowFactory = (
     })
 
     // Continue normal processing
-    .addEdge('translateMessage', 'extractFilterValues')
+    .addEdge('translateMessage', 'checkIfLookingForPet')
+    .addConditionalEdges('checkIfLookingForPet', getNextNodeForPetSearch, {
+      extractFilterValues: 'extractFilterValues',
+      fallbackNotLookingForPet: 'fallbackNotLookingForPet',
+    })
+
     .addEdge('extractFilterValues', 'vectorQuery')
     .addEdge('vectorQuery', 'composeAnswer')
 
     // Ensure fallback node ends the process
     .addEdge('fallbackUnknownLanguage', '__end__')
+    .addEdge('fallbackNotLookingForPet', '__end__')
     .addEdge('composeAnswer', '__end__');
 
 /**
