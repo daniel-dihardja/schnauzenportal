@@ -1,0 +1,35 @@
+name: Run API Tests on Commit
+
+on:
+  push:
+    branches:
+      - '**' # Runs on all branches on push
+
+jobs:
+  api-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18 # Adjust if needed
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Set up environment variables
+        run: |
+          echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> $GITHUB_ENV
+          echo "ATLAS_MONGODB_URI=${{ secrets.ATLAS_MONGODB_URI }}" >> $GITHUB_ENV
+          echo "LANGCHAIN_API_KEY=${{ secrets.LANGCHAIN_API_KEY }}" >> $GITHUB_ENV
+          echo "DB=${{ secrets.DB }}" >> $GITHUB_ENV
+          echo "COLLECTION=${{ secrets.COLLECTION }}" >> $GITHUB_ENV
+          echo "VECTOR_SEARCH_INDEX_NAME=${{ secrets.VECTOR_SEARCH_INDEX_NAME }}" >> $GITHUB_ENV
+
+      - name: Run API tests
+        run: npm run api:test
