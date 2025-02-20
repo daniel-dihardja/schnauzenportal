@@ -6,34 +6,9 @@ on:
       - '**' # Runs on all branches on push
 
 jobs:
-  api-tests:
+  tests:
     runs-on: ubuntu-latest
     environment: schnauzenportal # Uses the correct environment for secrets
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Set up Node.js 20
-        uses: actions/setup-node@v3
-        with:
-          node-version: 20
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Set up Environment Variables
-        run: |
-          echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> $GITHUB_ENV
-
-      - name: Run API Tests (Without Server)
-        run: npm run api:test
-
-  e2e-tests:
-    runs-on: ubuntu-latest
-    environment: schnauzenportal # Uses the correct environment for secrets
-    needs: api-tests # Runs only if API tests pass
 
     steps:
       - name: Checkout repository
@@ -59,6 +34,9 @@ jobs:
           echo "API_KEY=${{ secrets.API_KEY }}" >> $GITHUB_ENV
           echo "API_URL=${{ secrets.API_URL }}" >> $GITHUB_ENV
 
+      - name: Run API Tests (Without Server)
+        run: npm run api:test
+
       - name: Start API Server (For E2E Tests Only)
         run: npm run api:serve &
         env:
@@ -72,10 +50,10 @@ jobs:
           API_URL: ${{ secrets.API_URL }}
 
       - name: Wait for API to be ready
-        run: sleep 10 # Adjust based on API startup time
+        run: sleep 10 # Adjust this based on API startup time
 
       - name: Run E2E Tests
         run: npm run api:e2e
 
-      - name: Stop API Server (After E2E Tests)
+      - name: Stop API Server (After Tests)
         run: kill $(lsof -t -i:3333) || echo "No process found" # Adjust port if needed
