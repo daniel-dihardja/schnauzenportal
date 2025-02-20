@@ -8,6 +8,7 @@ on:
 jobs:
   api-tests:
     runs-on: ubuntu-latest
+    environment: schnauzenportal # Use the correct GitHub environment
 
     steps:
       - name: Checkout repository
@@ -16,7 +17,7 @@ jobs:
       - name: Set up Node.js 20
         uses: actions/setup-node@v3
         with:
-          node-version: 20 # Upgraded to Node.js 20
+          node-version: 20 # Using Node.js 20
           cache: 'npm'
 
       - name: Install dependencies
@@ -31,21 +32,5 @@ jobs:
           echo "COLLECTION=${{ secrets.COLLECTION }}" >> $GITHUB_ENV
           echo "VECTOR_SEARCH_INDEX_NAME=${{ secrets.VECTOR_SEARCH_INDEX_NAME }}" >> $GITHUB_ENV
 
-      - name: Start API Server
-        run: npm run api:serve &
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          ATLAS_MONGODB_URI: ${{ secrets.ATLAS_MONGODB_URI }}
-          LANGCHAIN_API_KEY: ${{ secrets.LANGCHAIN_API_KEY }}
-          DB: ${{ secrets.DB }}
-          COLLECTION: ${{ secrets.COLLECTION }}
-          VECTOR_SEARCH_INDEX_NAME: ${{ secrets.VECTOR_SEARCH_INDEX_NAME }}
-
-      - name: Wait for API to be ready
-        run: sleep 10 # Adjust based on API startup time
-
       - name: Run API Tests
         run: npm run api:test
-
-      - name: Stop API Server (if necessary)
-        run: kill $(lsof -t -i:3000) || echo "No process found" # Adjust port if needed
