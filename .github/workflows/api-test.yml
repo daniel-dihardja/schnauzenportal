@@ -8,7 +8,7 @@ on:
 jobs:
   api-tests:
     runs-on: ubuntu-latest
-    environment: schnauzenportal # Use the correct GitHub environment
+    environment: schnauzenportal # Ensures GitHub Actions pulls from the correct environment
 
     steps:
       - name: Checkout repository
@@ -17,20 +17,14 @@ jobs:
       - name: Set up Node.js 20
         uses: actions/setup-node@v3
         with:
-          node-version: 20 # Using Node.js 20
+          node-version: 20
           cache: 'npm'
 
       - name: Install dependencies
         run: npm install
 
-      - name: Set up environment variables
-        run: |
-          echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> $GITHUB_ENV
-          echo "ATLAS_MONGODB_URI=${{ secrets.ATLAS_MONGODB_URI }}" >> $GITHUB_ENV
-          echo "LANGCHAIN_API_KEY=${{ secrets.LANGCHAIN_API_KEY }}" >> $GITHUB_ENV
-          echo "DB=${{ secrets.DB }}" >> $GITHUB_ENV
-          echo "COLLECTION=${{ secrets.COLLECTION }}" >> $GITHUB_ENV
-          echo "VECTOR_SEARCH_INDEX_NAME=${{ secrets.VECTOR_SEARCH_INDEX_NAME }}" >> $GITHUB_ENV
+      - name: Set up OpenAI API Key
+        run: echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> $GITHUB_ENV
 
       - name: Run API Tests
         run: npm run api:test
