@@ -80,7 +80,7 @@ describe('API Tests', () => {
       // Ensure the response contains the fallback message
       expect(typeof res.data.generalAnswer).toBe('string');
       expect(res.data.generalAnswer).toBe(
-        "I'm sorry, but I couldn't detect the language of your message. Please try again using a supported language."
+        "I'm sorry, but I couldn't detect the language of your message."
       );
 
       // Ensure `individualPetAnswers` is an empty array

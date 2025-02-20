@@ -154,7 +154,7 @@ export const fallbackUnknownLanguage = async (): Promise<{
   return {
     response: {
       generalAnswer:
-        "I'm sorry, but I couldn't detect the language of your message. Please try again using a supported language.",
+        "I'm sorry, but I couldn't detect the language of your message.",
       individualPetAnswers: [],
     },
   };
