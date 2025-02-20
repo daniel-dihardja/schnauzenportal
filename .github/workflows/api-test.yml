@@ -31,5 +31,21 @@ jobs:
           echo "COLLECTION=${{ secrets.COLLECTION }}" >> $GITHUB_ENV
           echo "VECTOR_SEARCH_INDEX_NAME=${{ secrets.VECTOR_SEARCH_INDEX_NAME }}" >> $GITHUB_ENV
 
-      - name: Run API tests
+      - name: Start API Server
+        run: npm run api:serve &
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ATLAS_MONGODB_URI: ${{ secrets.ATLAS_MONGODB_URI }}
+          LANGCHAIN_API_KEY: ${{ secrets.LANGCHAIN_API_KEY }}
+          DB: ${{ secrets.DB }}
+          COLLECTION: ${{ secrets.COLLECTION }}
+          VECTOR_SEARCH_INDEX_NAME: ${{ secrets.VECTOR_SEARCH_INDEX_NAME }}
+
+      - name: Wait for API to be ready
+        run: sleep 10 # Adjust based on API startup time
+
+      - name: Run API Tests
         run: npm run api:test
+
+      - name: Stop API Server (if necessary)
+        run: kill $(lsof -t -i:3000) || echo "No process found" # Adjust port if needed
