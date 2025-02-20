@@ -6,7 +6,8 @@ on:
       - '**' # Runs on all branches on push
 
 jobs:
-  tests:
+  api-tests: # Change job identifier
+    name: API Tests # Set readable name in GitHub Actions UI
     runs-on: ubuntu-latest
     environment: schnauzenportal # Uses the correct environment for secrets
 
