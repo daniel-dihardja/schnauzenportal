@@ -1,4 +1,4 @@
-name: Run API Tests on Commit
+name: Run API & E2E Tests on Commit
 
 on:
   push:
@@ -6,9 +6,9 @@ on:
       - '**' # Runs on all branches on push
 
 jobs:
-  api-tests:
+  tests:
     runs-on: ubuntu-latest
-    environment: schnauzenportal # Ensures GitHub Actions pulls from the correct environment
+    environment: schnauzenportal # Uses the correct environment for secrets
 
     steps:
       - name: Checkout repository
@@ -23,8 +23,37 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Set up OpenAI API Key
-        run: echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> $GITHUB_ENV
+      - name: Set up Environment Variables
+        run: |
+          echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> $GITHUB_ENV
+          echo "ATLAS_MONGODB_URI=${{ secrets.ATLAS_MONGODB_URI }}" >> $GITHUB_ENV
+          echo "LANGCHAIN_API_KEY=${{ secrets.LANGCHAIN_API_KEY }}" >> $GITHUB_ENV
+          echo "DB=${{ secrets.DB }}" >> $GITHUB_ENV
+          echo "COLLECTION=${{ secrets.COLLECTION }}" >> $GITHUB_ENV
+          echo "VECTOR_SEARCH_INDEX_NAME=${{ secrets.VECTOR_SEARCH_INDEX_NAME }}" >> $GITHUB_ENV
+          echo "API_KEY=${{ secrets.API_KEY }}" >> $GITHUB_ENV
+          echo "API_URL=${{ secrets.API_URL }}" >> $GITHUB_ENV
+
+      - name: Start API Server
+        run: npm run api:serve &
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ATLAS_MONGODB_URI: ${{ secrets.ATLAS_MONGODB_URI }}
+          LANGCHAIN_API_KEY: ${{ secrets.LANGCHAIN_API_KEY }}
+          DB: ${{ secrets.DB }}
+          COLLECTION: ${{ secrets.COLLECTION }}
+          VECTOR_SEARCH_INDEX_NAME: ${{ secrets.VECTOR_SEARCH_INDEX_NAME }}
+          API_KEY: ${{ secrets.API_KEY }}
+          API_URL: ${{ secrets.API_URL }}
+
+      - name: Wait for API to be ready
+        run: sleep 10 # Adjust this based on API startup time
 
       - name: Run API Tests
         run: npm run api:test
+
+      - name: Run E2E Tests
+        run: npm run api:e2e
+
+      - name: Stop API Server (if necessary)
+        run: kill $(lsof -t -i:3333) || echo "No process found" # Adjust port if needed
