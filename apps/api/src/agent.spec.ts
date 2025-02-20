@@ -16,7 +16,8 @@ describe('Agent Functions', () => {
   const createMockStateForFilterExtraction = (translatedMessage: string) => ({
     messages: [] as BaseMessage[], // Empty message array as default
     lang: 'de',
-    translatedMessage: translatedMessage.toString(), // Ensure it's a string
+    translatedMessage,
+    isLookingForPet: false, // Added field
     filter: {} as Filter,
     pets: null as Pet[] | null,
     response: null as ResponseType | null,
@@ -29,7 +30,8 @@ describe('Agent Functions', () => {
   ) => ({
     messages: [{ content: message }] as BaseMessage[],
     lang,
-    translatedMessage: message.toString(), // Ensure it's a string
+    translatedMessage: message,
+    isLookingForPet: true, // Added field
     filter: {} as Filter,
     pets,
     response: null as ResponseType | null,
@@ -87,7 +89,8 @@ describe('Agent Functions', () => {
         messages: [{ content: 'Hallo, wie geht es dir?' }] as BaseMessage[],
         lang: 'de',
         translatedMessage: '',
-        filter: {} as Filter, // Added missing properties
+        isLookingForPet: false, // Added field
+        filter: {} as Filter,
         pets: null as Pet[] | null,
         response: null as ResponseType | null,
       };
@@ -106,7 +109,8 @@ describe('Agent Functions', () => {
         messages: [{ content: 'Hello, how are you?' }] as BaseMessage[],
         lang: 'en',
         translatedMessage: '',
-        filter: {} as Filter, // Added missing properties
+        isLookingForPet: false, // Added field
+        filter: {} as Filter,
         pets: null as Pet[] | null,
         response: null as ResponseType | null,
       };
