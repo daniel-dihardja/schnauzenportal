@@ -161,12 +161,19 @@ export const fallbackUnknownLanguage = async (): Promise<{
 };
 
 /**
- * Creates a LangGraph workflow with injected dependencies.
+ * Determines the next node based on language detection.
  *
- * @param {ChatOpenAI} llm - The LLM service to use.
- * @param {PetVectorSearch} petVectorSearch - The vector search service to use.
- * @returns {StateGraph} The configured LangGraph workflow.
+ * @param {typeof StateAnnotation.State} state - The current state.
+ * @returns {string} The next node name.
  */
+const getNextNodeForLanguageDetection = (
+  state: typeof StateAnnotation.State
+): string => {
+  return state.lang === 'unknown'
+    ? 'fallbackUnknownLanguage'
+    : 'translateMessage';
+};
+
 export const workflowFactory = (
   llmService: LlmService,
   petVectorSearch: PetVectorSearch
@@ -184,18 +191,11 @@ export const workflowFactory = (
     // Define start
     .addEdge('__start__', 'detectLanguage')
 
-    // Corrected Conditional Edge for Language Detection
-    .addConditionalEdges(
-      'detectLanguage',
-      (state) =>
-        state.lang === 'unknown'
-          ? 'fallbackUnknownLanguage'
-          : 'translateMessage',
-      {
-        fallbackUnknownLanguage: 'fallbackUnknownLanguage',
-        translateMessage: 'translateMessage',
-      }
-    )
+    // Use extracted function for Conditional Edge
+    .addConditionalEdges('detectLanguage', getNextNodeForLanguageDetection, {
+      fallbackUnknownLanguage: 'fallbackUnknownLanguage',
+      translateMessage: 'translateMessage',
+    })
 
     // Continue normal processing
     .addEdge('translateMessage', 'extractFilterValues')
