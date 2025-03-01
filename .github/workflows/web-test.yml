@@ -13,7 +13,7 @@ on:
 
 jobs:
   test:
-    name: Run Frontend Unit Tests
+    name: Web Tests
     runs-on: ubuntu-latest
 
     steps:
