@@ -25,7 +25,7 @@ describe('Index Page', () => {
     render(<Index />);
     expect(screen.getByTestId('pet-description-ta')).toBeInTheDocument();
     expect(
-      screen.getByRole('button', { name: /Passende Haustiere finden/i })
+      screen.getByRole('button', { name: /Find suitable pets/i })
     ).toBeDisabled();
   });
 
@@ -33,7 +33,7 @@ describe('Index Page', () => {
     render(<Index />);
     const textarea = screen.getByTestId('pet-description-ta');
     const button = screen.getByRole('button', {
-      name: /Passende Haustiere finden/i,
+      name: /Find suitable pets/i,
     });
 
     fireEvent.change(textarea, { target: { value: 'Ich suche eine Katze' } });
@@ -74,7 +74,7 @@ describe('Index Page', () => {
 
     render(<Index />);
     const button = screen.getByRole('button', {
-      name: /Passende Haustiere finden/i,
+      name: /Find suitable pets/i,
     });
 
     expect(button).toBeDisabled();

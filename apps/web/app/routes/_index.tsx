@@ -76,7 +76,7 @@ export default function Index() {
           <Select
             data-testid="example-query-select"
             className="w-full sm:w-80"
-            label="Beispielanfragen"
+            label="Example queries"
             selectedKeys={selectedKeys}
             onSelectionChange={handleSelectChange}
           >
@@ -92,18 +92,18 @@ export default function Index() {
               `}
           </style>
           <Textarea
-            label="Schreiben Sie hier, wonach Sie suchen:"
+            label="Write here what you are looking for:"
             id="pet-description"
             data-testid="pet-description-ta"
             name="message"
-            placeholder="Beispiel: „Ich suche einen Hund, der möglicherweise Verhaltensprobleme hat oder als schwierig gilt. Ich habe Erfahrung mit solchen Hunden und bin bereit, mit ihm zu arbeiten.“"
+            placeholder="Example: 'I am looking for a dog that may have behavioral issues or is considered difficult. I have experience with such dogs and am willing to work with them.'"
             fullWidth={true}
             size="lg"
             minRows={3}
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             variant="flat"
-            description="Beschreiben Sie das gesuchte Haustier, z. B. eine ruhige Kuschelkatze oder einen herausfordernden Hund mit Trainingsbedarf."
+            description="Describe the pet you are looking for, e.g., a calm cuddle cat or a challenging dog in need of training."
             classNames={{
               label: 'text-lg font-bold px-2',
               input: 'p-2',
@@ -123,7 +123,7 @@ export default function Index() {
             disabled={!isButtonEnabled}
             isLoading={fetcher.state === 'submitting'}
           >
-            <strong>Passende Haustiere finden</strong>
+            <strong>Find suitable pets</strong>
           </Button>
         </div>
       </fetcher.Form>
