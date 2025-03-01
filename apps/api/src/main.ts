@@ -7,7 +7,7 @@ app.use(express.json()); // For parsing JSON payloads
 app.use(express.urlencoded({ extended: true })); // For parsing URL-encoded payloads
 
 app.get('/', (req, res) => {
-  res.send('Schnauzenportal');
+  res.json({ message: 'Schnauzenportal' });
 });
 
 app.post('/search', async (req, res) => {
