@@ -6,7 +6,8 @@
     "api:serve": "npx nx run api:serve --configuration=development",
     "web:serve": "npx nx run web:dev",
     "api:e2e": "npx nx run api-e2e:e2e ",
-    "api:test": "npx nx run api:test"
+    "api:test": "npx nx run api:test",
+    "web:test": "NODE_OPTIONS=--experimental-vm-modules npx nx run web:test"
   },
   "private": true,
   "dependencies": {

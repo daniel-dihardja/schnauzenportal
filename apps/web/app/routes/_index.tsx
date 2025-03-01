@@ -4,6 +4,7 @@ import {
   CardBody,
   Select,
   SelectItem,
+  SharedSelection,
   Textarea,
 } from '@nextui-org/react';
 import { ActionFunctionArgs } from '@remix-run/node';
@@ -52,12 +53,17 @@ export default function Index() {
     setIsButtonEnabled(message.trim() !== '');
   }, [message]);
 
-  const handleSelectChange = (keys: any) => {
-    const selectedKey = Array.from(keys as Set<string>)[0]; // Cast 'keys' to Set<string>
+  const handleSelectChange = (keys: SharedSelection) => {
+    // Convert `keys` into an array and extract the first value as a string
+    const selectedKey = Array.from(keys).map(String)[0] || '';
+
+    // Find the corresponding message
     const selectedMessage =
       messagePrefixes.find((msg) => msg.key === selectedKey)?.key || '';
+
+    // Ensure selectedKeys state is updated with strings only
     setMessage(selectedMessage);
-    setSelectedKeys(new Set<string>([selectedKey])); // Explicitly use Set<string>
+    setSelectedKeys(new Set<string>([selectedKey]));
   };
 
   const { generalAnswer: summary = '', individualPetAnswers: pets = [] } =
@@ -68,6 +74,7 @@ export default function Index() {
       <fetcher.Form method="post">
         <div className="grid grid-cols-1 gap-4">
           <Select
+            data-testid="example-query-select"
             className="w-full sm:w-80"
             label="Beispielanfragen"
             selectedKeys={selectedKeys}
@@ -87,6 +94,7 @@ export default function Index() {
           <Textarea
             label="Schreiben Sie hier, wonach Sie suchen:"
             id="pet-description"
+            data-testid="pet-description-ta"
             name="message"
             placeholder="Beispiel: „Ich suche einen Hund, der möglicherweise Verhaltensprobleme hat oder als schwierig gilt. Ich habe Erfahrung mit solchen Hunden und bin bereit, mit ihm zu arbeiten.“"
             fullWidth={true}
