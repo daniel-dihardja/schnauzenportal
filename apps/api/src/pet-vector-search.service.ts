@@ -10,12 +10,9 @@ if (process.env.ENV !== 'production') {
 
 /**
  * A service class that provides functionality for searching pets using vector search and OpenAI embeddings.
- *
- * This class connects to a MongoDB database, generates text embeddings using the OpenAI API, and
- * performs vector-based search queries to find matching pets based on user input and filters.
  */
 export class PetVectorSearch {
-  private dbUri: string;
+  private static client: MongoClient; // Singleton MongoClient
   private dbName: string;
   private collectionName: string;
   private vectorSearchIndex: string;
@@ -27,7 +24,6 @@ export class PetVectorSearch {
    * Initializes environment variables and sets up the OpenAI client.
    */
   constructor() {
-    this.dbUri = process.env.ATLAS_MONGODB_URI as string;
     this.dbName = process.env.DB as string;
     this.collectionName = process.env.COLLECTION as string;
     this.vectorSearchIndex = process.env.VECTOR_SEARCH_INDEX_NAME as string;
@@ -35,6 +31,17 @@ export class PetVectorSearch {
     this.openaiClient = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
     });
+
+    // Initialize MongoDB client only once
+    if (!PetVectorSearch.client) {
+      PetVectorSearch.client = new MongoClient(
+        process.env.ATLAS_MONGODB_URI as string,
+        {
+          maxPoolSize: 10, // Optional: Limits max concurrent connections
+        }
+      );
+      PetVectorSearch.client.connect(); // Connect only once
+    }
   }
 
   /**
@@ -45,9 +52,7 @@ export class PetVectorSearch {
    */
   private async getCollection(): Promise<Collection> {
     if (!this.collection) {
-      const client = new MongoClient(this.dbUri);
-      await client.connect();
-      const db: Db = client.db(this.dbName);
+      const db: Db = PetVectorSearch.client.db(this.dbName);
       this.collection = db.collection(this.collectionName);
     }
     return this.collection;
@@ -55,9 +60,6 @@ export class PetVectorSearch {
 
   /**
    * Generates vector embeddings for the given text using the OpenAI API.
-   *
-   * @param {string} text - The input text to generate embeddings for.
-   * @returns {Promise<number[]>} A promise that resolves to the embedding vector.
    */
   private async getGptEmbeddings(text: string): Promise<number[]> {
     const response = await this.openaiClient.embeddings.create({
@@ -69,10 +71,6 @@ export class PetVectorSearch {
 
   /**
    * Performs a vector search for pets based on a user query and optional filter criteria.
-   *
-   * @param {string} query - The user query describing the pet.
-   * @param {Filter} filterObj - An optional filter object for additional search constraints.
-   * @returns {Promise<Pet[]>} A promise that resolves to an array of matching pets.
    */
   public async searchPets(query: string, filterObj: Filter): Promise<Pet[]> {
     const collection = await this.getCollection();
