@@ -11,9 +11,9 @@
   },
   "private": true,
   "dependencies": {
-    "@langchain/core": "^0.3.27",
-    "@langchain/langgraph": "^0.2.38",
-    "@langchain/openai": "^0.3.16",
+    "@langchain/core": "^0.3.42",
+    "@langchain/langgraph": "^0.2.55",
+    "@langchain/openai": "^0.3.17",
     "@nextui-org/react": "^2.6.11",
     "@remix-run/node": "^2.14.0",
     "@remix-run/react": "^2.14.0",
