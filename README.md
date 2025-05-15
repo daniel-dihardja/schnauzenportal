@@ -44,11 +44,6 @@ The app defines a LangGraph state machine that processes messages through the fo
 - Translates everything to German for consistency in retrieval
 - Generates responses in the original input language
 
-## ✅ Example Use Case
-
-> **User input**: "Ich suche eine kleine Hündin, gerne schon älter, möglichst in Baden-Württemberg."  
-> **Agent output**: Suggests a few matching dogs, summarizes key traits, and offers a follow-up prompt — all personalized and translated.
-
 ## 📦 Future Extensions
 
 - Connect to real-time pet listings from more shelters
