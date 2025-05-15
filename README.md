@@ -58,5 +58,3 @@ The app defines a LangGraph state machine that processes messages through the fo
 ---
 
 > Demo: [https://petquery.b3ning.com](https://petquery.b3ning.com)
-
----
