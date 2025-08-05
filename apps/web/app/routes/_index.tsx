@@ -103,7 +103,7 @@ export default function Index() {
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             variant="flat"
-            description="Describe the pet you are looking for, e.g., a calm cuddle cat or a challenging dog in need of training."
+            description="Describe the pet you are looking for."
             classNames={{
               label: 'text-lg font-bold px-2',
               input: 'p-2',
