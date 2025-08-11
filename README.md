@@ -34,6 +34,7 @@ The app defines a LangGraph state machine that processes messages through the fo
 ## Tech Stack
 
 - **LangChain** & **LangGraph** — for stateful agent logic
+- **React/Remix** - for the Frontend
 - **Node.js** (TypeScript) — core application logic
 - **MongoDB Atlas** — stores vectorized pet listings
 - **Embeddings** — for semantic search of pet descriptions
