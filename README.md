@@ -1,6 +1,6 @@
 # PetQuery AI Agent
 
-**PetQuery** is an intelligent, multilingual AI agent designed to help users find adoptable pets using natural language input. Built with [LangChain](https://github.com/langchain-ai/langchain) and [LangGraph](https://github.com/langchain-ai/langgraph), the agent translates user queries, understands intent, extracts search filters, and performs vector-based pet retrieval — all through a structured LLM-powered workflow.
+**PetQuery** is a multilingual AI agent designed to help users find adoptable pets using natural language input. Built with [LangChain](https://github.com/langchain-ai/langchain) and [LangGraph](https://github.com/langchain-ai/langgraph), the agent translates user queries, understands intent, extracts search filters, and performs vector-based pet retrieval — all through a structured LLM-powered workflow.
 
 ## What it does
 
