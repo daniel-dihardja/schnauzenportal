@@ -23,7 +23,7 @@ The app defines a LangGraph state machine that processes messages through the fo
 6. **Response Composition** – generate a useful reply (general + pet-specific)
 7. **Fallback Handling** – if intent or language can't be understood
 
-## 🧩 Core Components
+## Core Components
 
 - `LlmService` — wraps language-related tasks: detection, translation, classification, and answer composition via OpenAI
 - `PetVectorSearch` — performs vector similarity searches on pet listings
